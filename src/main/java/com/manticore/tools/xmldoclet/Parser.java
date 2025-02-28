@@ -58,7 +58,7 @@ public class Parser {
         return ElementFilter.typesIn(elements);
     }
 
-    private String getJavaDoc(final Element element) {
+    String getJavaDoc(final Element element) {
         final var docCommentTree = docTrees.getDocCommentTree(element);
         return docCommentTree == null ? "" : docCommentTree.getFullBody().toString();
     }
@@ -110,7 +110,7 @@ public class Parser {
      * @param rootNode
      * @param classElement class to get its package
      */
-    private Package getPackage(final Root rootNode, final TypeElement classElement) {
+    Package getPackage(final Root rootNode, final TypeElement classElement) {
         try {
             final var packageDoc = (PackageElement) getTopLevelClass(classElement).getEnclosingElement();
 
@@ -129,7 +129,7 @@ public class Parser {
 
     /**
      * {@return the top-level class of a given inner class, or the class itself if it's not an inner class}
-     * 
+     *
      * @param classElement a class or inner class
      */
     static TypeElement getTopLevelClass(final TypeElement classElement) {

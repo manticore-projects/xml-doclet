@@ -61,9 +61,14 @@ dependencies {
     api 'javax.activation:javax.activation-api:+'
 
     testImplementation 'org.slf4j:slf4j-simple:+'
+    // Enables testing for Annotation Processors and Doclets https://github.com/Pante/elementary
+    testImplementation 'com.karuslabs:elementary:+'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-params:+' // Required by elementary
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter:+'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:+'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:+'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher:+'
+    testImplementation "org.mockito:mockito-core:+"
 
     // https://mvnrepository.com/artifact/net.sf.saxon/Saxon-HE
     implementation 'net.sf.saxon:Saxon-HE:+'
