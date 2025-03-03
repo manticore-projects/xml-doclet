@@ -58,9 +58,34 @@ public class Parser {
         return ElementFilter.typesIn(elements);
     }
 
+    /**
+     * Gets the JavaDoc comment for an element.
+     * 
+     * This method retrieves the DocCommentTree for an element and returns
+     * its full body as a string. It also post-processes the comment to fix
+     * an issue where HTML entities and tags get commas added around them.
+     * The regex replacements remove these unwanted commas to ensure the
+     * HTML content is properly preserved in the generated XML.
+     * 
+     * @param element the element to get its JavaDoc
+     * @return the element's JavaDoc comment or empty string if none exists
+     */
     String getJavaDoc(final Element element) {
         final var docCommentTree = docTrees.getDocCommentTree(element);
-        return docCommentTree == null ? "" : docCommentTree.getFullBody().toString();
+        if (docCommentTree == null) {
+            return "";
+        }
+
+        // Get the raw JavaDoc comment text
+        String commentText = docCommentTree.getFullBody().toString();
+
+        // Fix issue #12: Remove commas that are added around HTML tags and entities
+        // Pattern: comma followed by < or & or > or ;
+        commentText = commentText.replaceAll(",(<|&|>|;)", "$1");
+        // Pattern: < or & or > or ; followed by comma
+        commentText = commentText.replaceAll("(<|&|>|;),", "$1");
+
+        return commentText;
     }
 
     /**
