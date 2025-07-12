@@ -193,7 +193,7 @@ publishing {
             name "central"
             url version.toString().endsWith('-SNAPSHOT')
                     ? "https://central.sonatype.com/repository/maven-snapshots/"
-                    : "https://central.sonatype.com/repository/maven-releases"
+                    : "https://central.sonatype.com/repository/releases/"
             credentials(PasswordCredentials)
         }
     }
