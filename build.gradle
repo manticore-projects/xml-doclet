@@ -2,6 +2,7 @@ import se.bjurr.gitchangelog.plugin.gradle.GitChangelogTask
 
 plugins {
     id "java-library"
+    id "com.vanniktech.maven.publish" version "latest.release"
     id "maven-publish"
     id "signing"
 
@@ -129,84 +130,55 @@ version = getVersion( !System.getenv("RELEASE") )
 group = 'com.manticore-projects.tools'
 description = 'XML Doclet'
 
+mavenPublishing {
+    coordinates(group, "xml-doclet", version)
 
-publish {
-    dependsOn(check)
-}
-
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            artifactId='xml-doclet'
-
-            from components.java
-            versionMapping {
-                usage('java-api') {
-                    fromResolutionOf('runtimeClasspath')
-                }
-                usage('java-runtime') {
-                    fromResolutionResult()
-                }
-            }
-            pom {
-                name = 'XML Doclet'
-                description = 'Doclet for writing XML file (instead of JavaDoc HTML)'
-                url = 'https://github.com/manticore-projects/xml-doclet'
-                licenses {
-                    license {
-                        name = 'The Apache Software License, Version 2.0'
-                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                    }
-                }
-                developers {
-                    developer {
-                        id = 'mbe'
-                        name = 'Markus Bernhardt'
-                        email = 'markus.bernhardt@me.comt'
-                    }
-                    developer {
-                        id = 'are'
-                        name = 'Andreas Reichel'
-                        email = 'andreas@manticore-projects.com'
-                    }
-                    developer {
-                        id = 'vha'
-                        name = 'Vojtěch Habarta'
-                    }
-                    developer {
-                        id = 'maca'
-                        name = 'Manoel Campos'
-                        email = ''
-                    }
-                }
-                scm {
-                    connection = 'scm:git:https://github.com/manticore-projects/xml-doclet.git'
-                    developerConnection = 'scm:git:ssh://git@github.com:manticore-projects/xml-doclet.git'
-                    url = 'https://github.com/manticore-projects/xml-doclet.git'
-                }
+    pom {
+        name = 'XML Doclet'
+        description = 'Doclet for writing XML file (instead of JavaDoc HTML)'
+        url = 'https://github.com/manticore-projects/xml-doclet'
+        licenses {
+            license {
+                name = 'The Apache Software License, Version 2.0'
+                url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
             }
         }
-    }
-    repositories {
-        maven {
-            // Username and Password are defined in ~/.gradle/gradle.properties
-            name "central"
-            url version.toString().endsWith('-SNAPSHOT')
-                    ? "https://central.sonatype.com/repository/maven-snapshots/"
-                    : "https://central.sonatype.com/repository/releases/"
-            credentials(PasswordCredentials)
+        developers {
+            developer {
+                id = 'mbe'
+                name = 'Markus Bernhardt'
+                email = 'markus.bernhardt@me.comt'
+            }
+            developer {
+                id = 'are'
+                name = 'Andreas Reichel'
+                email = 'andreas@manticore-projects.com'
+            }
+            developer {
+                id = 'vha'
+                name = 'Vojtěch Habarta'
+            }
+            developer {
+                id = 'maca'
+                name = 'Manoel Campos'
+                email = ''
+            }
+        }
+        scm {
+            connection = 'scm:git:https://github.com/manticore-projects/xml-doclet.git'
+            developerConnection = 'scm:git:ssh://git@github.com:manticore-projects/xml-doclet.git'
+            url = 'https://github.com/manticore-projects/xml-doclet.git'
         }
     }
 }
 
 signing {
     required { !version.endsWith("SNAPSHOT") && gradle.taskGraph.hasTask("publish") }
-    sign publishing.publications.mavenJava
 }
 
 java {
     withSourcesJar()
-    withJavadocJar()
+    //withJavadocJar()
 
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
