@@ -2,10 +2,11 @@ import se.bjurr.gitchangelog.plugin.gradle.GitChangelogTask
 
 plugins {
     id "java-library"
-    // https://github.com/GradleUp/shadow
-    id "com.gradleup.shadow" version "latest.release"
     id "maven-publish"
     id "signing"
+
+    // https://github.com/GradleUp/shadow
+    id "com.gradleup.shadow" version "latest.release"
 
     // https://github.com/qaware/xsd2java-gradle-plugin
     id "de.qaware.gradle.plugin.xsd2java" version "latest.release"
@@ -57,17 +58,17 @@ dependencies {
     // We need to export this as API explicitly and fix the Versions
     // or else the Doclet will silently(!) not generate the output
     api 'org.glassfish.jaxb:jaxb-runtime:+'
-    api('org.glassfish.jaxb:jaxb-core:+')
+    api 'org.glassfish.jaxb:jaxb-core:+'
     api 'javax.activation:javax.activation-api:+'
 
     testImplementation 'org.slf4j:slf4j-simple:+'
     // Enables testing for Annotation Processors and Doclets https://github.com/Pante/elementary
     testImplementation 'com.karuslabs:elementary:+'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-params:+' // Required by elementary
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter:+'
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:+'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:+'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:+'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-params:5.11.4' // Required by elementary
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter:5.11.4'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.11.4'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.11.4'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:5.11.4'
     testImplementation "org.mockito:mockito-core:+"
 
     // https://mvnrepository.com/artifact/net.sf.saxon/Saxon-HE
@@ -188,18 +189,18 @@ publishing {
     }
     repositories {
         maven {
-            name = "ossrh"
-
-            def releasesRepoUrl = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
-            def snapshotsRepoUrl= "https://s01.oss.sonatype.org/content/repositories/snapshots/"
-            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+            // Username and Password are defined in ~/.gradle/gradle.properties
+            name "central"
+            url version.toString().endsWith('-SNAPSHOT')
+                    ? "https://central.sonatype.com/repository/maven-snapshots/"
+                    : "https://central.sonatype.com/repository/maven-releases"
             credentials(PasswordCredentials)
         }
     }
 }
 
-
 signing {
+    required { !version.endsWith("SNAPSHOT") && gradle.taskGraph.hasTask("publish") }
     sign publishing.publications.mavenJava
 }
 
@@ -212,8 +213,6 @@ java {
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(17))
     }
-
-    //modularity.inferModulePath = true
 }
 
 jar {
@@ -293,6 +292,7 @@ javadoc {
 tasks.register('xmldoc', Javadoc) {
     dependsOn(jar)
     source = sourceSets.main.allJava
+    classpath = sourceSets.main.runtimeClasspath
 
     // beware: Gradle deletes this folder automatically and there is no switch-off
     destinationDir = reporting.file("xmlDoclet")

@@ -41,7 +41,7 @@ public abstract class AbstractTest {
     }
 
     /**
-     * Rigourous Parser :-)
+     * Rigorous Parser :-)
      */
     @Test
     public void testSampledoc() {

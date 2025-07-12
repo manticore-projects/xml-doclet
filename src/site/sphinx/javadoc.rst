@@ -1,208 +1,489 @@
 
-.. raw:: html
-
-    <div id="floating-toc">
-        <div class="search-container">
-            <input type="button" id="toc-hide-show-btn"></input>
-            <input type="text" id="toc-search" placeholder="Search" />
-        </div>
-        <ul id="toc-list"></ul>
-    </div>
-
-
-
 #######################################################################
-API 1.4.0-SNAPSHOT
+API 2.1.0-SNAPSHOT
 #######################################################################
 
-Base Package: com.manticore.tools.xmldoclet.xmldoclet
+Base Package: com.manticore.tools.xmldoclet
 
 
-..  _com.manticore.tools.xmldoclet.xmldoclet:
+..  _com.manticore.tools.xmldoclet:
 ***********************************************************************
 Base
 ***********************************************************************
 
-..  _com.manticore.tools.xmldoclet.xmldoclet.Parser:
+..  _com.manticore.tools.xmldoclet.CustomOption:
+
+=======================================================================
+CustomOption
+=======================================================================
+
+*extends:* :ref:`Object<java.lang.Object>` *implements:* :ref:`Option<jdk.javadoc.doclet.Doclet.Option>` 
+
+
+                Creates an Option with a given specification and a default arguments processor.
+                
+                |          :ref:`String<java.lang.String>` name
+
+                |          :ref:`String<java.lang.String>` description
+
+                |          :ref:`String<java.lang.String>` argName
+
+                |          int argumentCount
+
+            
+                Creates an Option with a given specification.
+                |          :ref:`String<java.lang.String>` name
+
+                |          :ref:`String<java.lang.String>` description
+
+                |          :ref:`String<java.lang.String>` parameters
+
+                |          int argumentCount
+
+                |          :ref:`String>><java.util.function.BiPredicate<java.lang.String,java.util.List<java.lang.String>>>` argumentsProcessor
+
+            | **newOneArg** (name, description, argName, argumentsProcessor) → :ref:`CustomOption<com.manticore.tools.xmldoclet.CustomOption>`
+| Creates an Option with a single argument value and a given specification.
+|          :ref:`String<java.lang.String>` name
+|          :ref:`String<java.lang.String>` description
+|          :ref:`String<java.lang.String>` argName
+|          :ref:`String>><java.util.function.BiPredicate<java.lang.String,java.util.List<java.lang.String>>>` argumentsProcessor
+|          returns :ref:`CustomOption<com.manticore.tools.xmldoclet.CustomOption>`
+
+
+
+| **newNoArgs** (name, description, argumentsProcessor) → :ref:`CustomOption<com.manticore.tools.xmldoclet.CustomOption>`
+| Creates an Option with no arguments and a given specification
+|          :ref:`String<java.lang.String>` name
+|          :ref:`String<java.lang.String>` description
+|          :ref:`String>><java.util.function.BiPredicate<java.lang.String,java.util.List<java.lang.String>>>` argumentsProcessor
+|          returns :ref:`CustomOption<com.manticore.tools.xmldoclet.CustomOption>`
+
+
+
+
+                |          :ref:`String<java.lang.String>` name
+
+                |          returns :ref:`String<java.lang.String>`
+
+
+            | *@Override*
+| **getArgumentCount** () → int
+|          returns int
+
+
+
+| *@Override*
+| **getDescription** () → :ref:`String<java.lang.String>`
+|          returns :ref:`String<java.lang.String>`
+
+
+
+| *@Override*
+| **getKind** () → :ref:`Kind<jdk.javadoc.doclet.Doclet.Option.Kind>`
+|          returns :ref:`Kind<jdk.javadoc.doclet.Doclet.Option.Kind>`
+
+
+
+| *@Override*
+| **getNames** () → :ref:`String><java.util.List<java.lang.String>>`
+| {@inheritDoc}, In the case of this class, the list has only one element, the single option name.
+|          returns :ref:`String><java.util.List<java.lang.String>>`
+
+
+
+| **getName** () → :ref:`String<java.lang.String>`
+| This class provides a single name for the option. Therefore, no alternative names are supported.
+|          returns :ref:`String<java.lang.String>`
+
+
+
+| *@Override*
+| **getParameters** () → :ref:`String<java.lang.String>`
+|          returns :ref:`String<java.lang.String>`
+
+
+
+| *@Override*
+| **process** (option, arguments) → boolean
+| {@inheritDoc}, It must check if the given option arguments are valid.
+|          :ref:`String<java.lang.String>` option
+|          :ref:`String><java.util.List<java.lang.String>>` arguments
+|          returns boolean
+
+
+
+
+..  _com.manticore.tools.xmldoclet.Parser:
 
 =======================================================================
 Parser
 =======================================================================
 
-*extends:* :ref:`Object<java.lang.Object>`
+*extends:* :ref:`Object<java.lang.Object>` 
 
 | The main parser class. It scans the given Doclet document root and creates the XML tree.
 
-| **Parser** ()
+| **Parser** (env)
+|          :ref:`DocletEnvironment<jdk.javadoc.doclet.DocletEnvironment>` env
 
 
-| **parseRootDoc** (rootDoc) → :ref:`Root<com.manticore.tools.xmldoclet.xmldoclet.xjc.Root>`
+| **getClasses** (env) → :ref:`TypeElement><java.util.Set<javax.lang.model.element.TypeElement>>`
+|          :ref:`DocletEnvironment<jdk.javadoc.doclet.DocletEnvironment>` env
+|          returns :ref:`TypeElement><java.util.Set<javax.lang.model.element.TypeElement>>`
+
+
+
+
+                Gets the JavaDoc comment for an element.
+ 
+ This method retrieves the DocCommentTree for an element and returns
+ its full body as a string. It also post-processes the comment to fix
+ an issue where HTML entities and tags get commas added around them.
+ The regex replacements remove these unwanted commas to ensure the
+ HTML content is properly preserved in the generated XML.
+                
+                
+                |          :ref:`Element<javax.lang.model.element.Element>` element
+
+                |          returns :ref:`String<java.lang.String>`
+
+
+            | **getTags** (element) → :ref:`DocTree><java.util.List<? extends com.sun.source.doctree.DocTree>>`
+|          :ref:`Element<javax.lang.model.element.Element>` element
+|          returns :ref:`DocTree><java.util.List<? extends com.sun.source.doctree.DocTree>>`
+
+
+
+| **parseRootDoc** () → :ref:`Root<com.manticore.tools.xmldoclet.xjc.Root>`
 | The entry point into parsing the javadoc.
-|          :ref:`RootDoc<com.sun.javadoc.RootDoc>` rootDoc  | rootDoc The RootDoc intstance obtained via the doclet API
-|          returns :ref:`Root<com.manticore.tools.xmldoclet.xmldoclet.xjc.Root>`  | The root node, containing everything parsed from javadoc doclet
+|          returns :ref:`Root<com.manticore.tools.xmldoclet.xjc.Root>`
 
 
 
 
-                |          :ref:`PackageDoc<com.sun.javadoc.PackageDoc>` packageDoc
+                
+                
+                
+                |          :ref:`Root<com.manticore.tools.xmldoclet.xjc.Root>` rootNode
 
-                |          returns :ref:`Package<com.manticore.tools.xmldoclet.xmldoclet.xjc.Package>`
+                |          :ref:`TypeElement<javax.lang.model.element.TypeElement>` classElement
 
-
-
-                Parse an annotation.
-
-
-                |          :ref:`AnnotationTypeDoc<com.sun.javadoc.AnnotationTypeDoc>` annotationTypeDoc  | annotationTypeDoc A AnnotationTypeDoc instance
-
-                |          returns :ref:`Annotation<com.manticore.tools.xmldoclet.xmldoclet.xjc.Annotation>`  | the annotation node
+                |          returns :ref:`Package<com.manticore.tools.xmldoclet.xjc.Package>`
 
 
+            
+                {@return the top-level class of a given inner class, or the class itself if it's not an inner class}
+                
+                |          :ref:`TypeElement<javax.lang.model.element.TypeElement>` classElement
 
+                |          returns :ref:`TypeElement<javax.lang.model.element.TypeElement>`
+
+
+            
+                |          :ref:`PackageElement<javax.lang.model.element.PackageElement>` packageDoc
+
+                |          returns :ref:`Package<com.manticore.tools.xmldoclet.xjc.Package>`
+
+
+            
+                Parse the JavaDoc of an annotation type.
+                
+                
+                |          :ref:`TypeElement<javax.lang.model.element.TypeElement>` annotationTypeDoc
+
+                |          returns :ref:`Annotation<com.manticore.tools.xmldoclet.xjc.Annotation>`
+
+
+            
                 Parse the elements of an annotation
+                
+                
+                |          :ref:`ExecutableElement<javax.lang.model.element.ExecutableElement>` annotationTypeElementDoc
+
+                |          returns :ref:`AnnotationElement<com.manticore.tools.xmldoclet.xjc.AnnotationElement>`
 
 
-                |          :ref:`AnnotationTypeElementDoc<com.sun.javadoc.AnnotationTypeElementDoc>` annotationTypeElementDoc  | annotationTypeElementDoc A AnnotationTypeElementDoc instance
+            
+                |          :ref:`VariableElement<javax.lang.model.element.VariableElement>` element
 
-                |          returns :ref:`AnnotationElement<com.manticore.tools.xmldoclet.xmldoclet.xjc.AnnotationElement>`  | the annotation element node
-
-
-
-                Parses annotation instances of an annotable program element
+                |          returns :ref:`String<java.lang.String>`
 
 
+            
+                |          :ref:`TypeElement<javax.lang.model.element.TypeElement>` classDoc
 
-                |          :ref:`AnnotationDesc<com.sun.javadoc.AnnotationDesc>` annotationDesc  | annotationDesc annotationDesc
-
-                |          :ref:`String<java.lang.String>` programElement  | programElement programElement
-
-                |          returns :ref:`AnnotationInstance<com.manticore.tools.xmldoclet.xmldoclet.xjc.AnnotationInstance>`  | representation of annotations
+                |          returns :ref:`Enum<com.manticore.tools.xmldoclet.xjc.Enum>`
 
 
-
-                |          :ref:`ClassDoc<com.sun.javadoc.ClassDoc>` classDoc
-
-                |          returns :ref:`Enum<com.manticore.tools.xmldoclet.xmldoclet.xjc.Enum>`
-
-
-
+            
                 Parses an enum type definition
+                
+                
+                |          :ref:`VariableElement<javax.lang.model.element.VariableElement>` fieldDoc
+
+                |          returns :ref:`EnumConstant<com.manticore.tools.xmldoclet.xjc.EnumConstant>`
 
 
-                |          :ref:`FieldDoc<com.sun.javadoc.FieldDoc>` fieldDoc
+            
+                |          :ref:`TypeElement<javax.lang.model.element.TypeElement>` classDoc
 
-                |          returns :ref:`EnumConstant<com.manticore.tools.xmldoclet.xmldoclet.xjc.EnumConstant>`  |
-
-
-
-                |          :ref:`ClassDoc<com.sun.javadoc.ClassDoc>` classDoc
-
-                |          returns :ref:`Interface<com.manticore.tools.xmldoclet.xmldoclet.xjc.Interface>`
+                |          returns :ref:`Interface<com.manticore.tools.xmldoclet.xjc.Interface>`
 
 
+            
+                |          :ref:`TypeElement<javax.lang.model.element.TypeElement>` classDoc
 
-                |          :ref:`ClassDoc<com.sun.javadoc.ClassDoc>` classDoc
-
-                |          returns :ref:`Class<com.manticore.tools.xmldoclet.xmldoclet.xjc.Class>`
-
-
-
-                |          :ref:`ConstructorDoc<com.sun.javadoc.ConstructorDoc>` constructorDoc
-
-                |          returns :ref:`Constructor<com.manticore.tools.xmldoclet.xmldoclet.xjc.Constructor>`
+                |          returns :ref:`Class<com.manticore.tools.xmldoclet.xjc.Class>`
 
 
+            
+                |          :ref:`ExecutableElement<javax.lang.model.element.ExecutableElement>` constructorDoc
 
-                |          :ref:`MethodDoc<com.sun.javadoc.MethodDoc>` methodDoc
-
-                |          returns :ref:`Method<com.manticore.tools.xmldoclet.xmldoclet.xjc.Method>`
-
-
-
-                |          :ref:`Parameter<com.sun.javadoc.Parameter>` parameter
-
-                |          returns :ref:`MethodParameter<com.manticore.tools.xmldoclet.xmldoclet.xjc.MethodParameter>`
+                |          returns :ref:`Constructor<com.manticore.tools.xmldoclet.xjc.Constructor>`
 
 
+            
+                |          :ref:`ExecutableElement<javax.lang.model.element.ExecutableElement>` methodDoc
 
-                |          :ref:`FieldDoc<com.sun.javadoc.FieldDoc>` fieldDoc
-
-                |          returns :ref:`Field<com.manticore.tools.xmldoclet.xmldoclet.xjc.Field>`
-
-
-
-                |          :ref:`Type<com.sun.javadoc.Type>` type
-
-                |          returns :ref:`TypeInfo<com.manticore.tools.xmldoclet.xmldoclet.xjc.TypeInfo>`
+                |          returns :ref:`Method<com.manticore.tools.xmldoclet.xjc.Method>`
 
 
+            
+                |          :ref:`VariableElement<javax.lang.model.element.VariableElement>` parameter
 
-                |          :ref:`WildcardType<com.sun.javadoc.WildcardType>` wildcard
-
-                |          returns :ref:`Wildcard<com.manticore.tools.xmldoclet.xmldoclet.xjc.Wildcard>`
+                |          returns :ref:`MethodParameter<com.manticore.tools.xmldoclet.xjc.MethodParameter>`
 
 
+            
+                |          :ref:`VariableElement<javax.lang.model.element.VariableElement>` fieldDoc
 
+                |          returns :ref:`Field<com.manticore.tools.xmldoclet.xjc.Field>`
+
+
+            
+                |          :ref:`WildcardType<javax.lang.model.type.WildcardType>` wildcard
+
+                |          returns :ref:`Wildcard<com.manticore.tools.xmldoclet.xjc.Wildcard>`
+
+
+            
+                |          :ref:`TypeInfo><java.util.List<com.manticore.tools.xmldoclet.xjc.TypeInfo>>` wildcardNode
+
+                |          :ref:`TypeMirror<javax.lang.model.type.TypeMirror>` extendType
+
+                |          returns void
+
+
+            
+                |          :ref:`TypeParameterElement<javax.lang.model.element.TypeParameterElement>` typeParameter
+
+                |          returns :ref:`TypeParameter<com.manticore.tools.xmldoclet.xjc.TypeParameter>`
+
+
+            
                 Parse type variables for generics
+                
+                
+                |          :ref:`TypeVariable<javax.lang.model.type.TypeVariable>` typeVariable
+
+                |          returns :ref:`TypeParameter<com.manticore.tools.xmldoclet.xjc.TypeParameter>`
 
 
-                |          :ref:`TypeVariable<com.sun.javadoc.TypeVariable>` typeVariable
+            
+                Gets a type parameter bound for a generic type (such as &lt;T extends Number&gt; or &lt;T extends Comparable&lt;E&gt; &amp; Serializable&gt;)
+ and splits the name of each type into a list of strings
+                
+                
+                |          :ref:`TypeMirror<javax.lang.model.type.TypeMirror>` bound
 
-                |          returns :ref:`TypeParameter<com.manticore.tools.xmldoclet.xmldoclet.xjc.TypeParameter>`  |
-
-
-
-                |          :ref:`Tag<com.sun.javadoc.Tag>` tagDoc
-
-                |          returns :ref:`TagInfo<com.manticore.tools.xmldoclet.xmldoclet.xjc.TagInfo>`
-
+                |          returns :ref:`String><java.util.List<java.lang.String>>`
 
 
-                Returns string representation of scope
+            
+                |          :ref:`DocTree<com.sun.source.doctree.DocTree>` tagDoc
+
+                |          returns :ref:`TagInfo<com.manticore.tools.xmldoclet.xjc.TagInfo>`
 
 
-                |          :ref:`ProgramElementDoc<com.sun.javadoc.ProgramElementDoc>` doc
+            
+                
+                
+                |          :ref:`Element<javax.lang.model.element.Element>` doc
 
-                |          returns :ref:`String<java.lang.String>`  |
+                |          returns :ref:`String<java.lang.String>`
+
+
+            
+                Parses a ,{@link TypeMirror}, into a ,{@link TypeInfo}, object used by the XmlDoclet.
+                
+                
+                |          :ref:`TypeMirror<javax.lang.model.type.TypeMirror>` type
+
+                |          returns :ref:`TypeInfo<com.manticore.tools.xmldoclet.xjc.TypeInfo>`
+
+
+            
+..  _com.manticore.tools.xmldoclet.TypeUtils:
+
+=======================================================================
+TypeUtils
+=======================================================================
+
+*extends:* :ref:`Object<java.lang.Object>` 
+
+| **TypeUtils** (types, elements)
+|          :ref:`Types<javax.lang.model.util.Types>` types
+|          :ref:`Elements<javax.lang.model.util.Elements>` elements
+
+
+| **getMethodSignature** (methodDoc) → :ref:`String<java.lang.String>`
+|          :ref:`ExecutableElement<javax.lang.model.element.ExecutableElement>` methodDoc
+|          returns :ref:`String<java.lang.String>`
 
 
 
-..  _com.manticore.tools.xmldoclet.xmldoclet.XmlDoclet:
+| **hasModifier** (element, modifier) → boolean
+| Checks if an element has a given modifier
+|          :ref:`Element<javax.lang.model.element.Element>` element
+|          :ref:`Modifier<javax.lang.model.element.Modifier>` modifier
+|          returns boolean
+
+
+
+| **getFields** (classElement) → :ref:`VariableElement><java.util.List<javax.lang.model.element.VariableElement>>`
+|          :ref:`TypeElement<javax.lang.model.element.TypeElement>` classElement
+|          returns :ref:`VariableElement><java.util.List<javax.lang.model.element.VariableElement>>`
+
+
+
+| **getConstructors** (classElement) → :ref:`ExecutableElement><java.util.List<javax.lang.model.element.ExecutableElement>>`
+|          :ref:`TypeElement<javax.lang.model.element.TypeElement>` classElement
+|          returns :ref:`ExecutableElement><java.util.List<javax.lang.model.element.ExecutableElement>>`
+
+
+
+| **getMethods** (classElement) → :ref:`ExecutableElement><java.util.List<javax.lang.model.element.ExecutableElement>>`
+|          :ref:`TypeElement<javax.lang.model.element.TypeElement>` classElement
+|          returns :ref:`ExecutableElement><java.util.List<javax.lang.model.element.ExecutableElement>>`
+
+
+
+| **getWildcardType** (typeMirror) → :ref:`WildcardType<javax.lang.model.type.WildcardType>`
+|          :ref:`TypeMirror<javax.lang.model.type.TypeMirror>` typeMirror
+|          returns :ref:`WildcardType<javax.lang.model.type.WildcardType>`
+
+
+
+| **getParameterizedType** (typeMirror) → :ref:`DeclaredType<javax.lang.model.type.DeclaredType>`
+| Gets a type as DeclaredType if the typeMirror has type arguments (such a ,`List``String```,).
+|          :ref:`TypeMirror<javax.lang.model.type.TypeMirror>` typeMirror
+|          returns :ref:`DeclaredType<javax.lang.model.type.DeclaredType>`
+
+
+
+| **isArray** (typeMirror) → boolean
+|          :ref:`TypeMirror<javax.lang.model.type.TypeMirror>` typeMirror
+|          returns boolean
+
+
+
+| **getArrayDimension** (typeMirror) → :ref:`String<java.lang.String>`
+|          :ref:`TypeMirror<javax.lang.model.type.TypeMirror>` typeMirror
+|          returns :ref:`String<java.lang.String>`
+
+
+
+
+                |          :ref:`Element<javax.lang.model.element.Element>` element
+
+                |          returns :ref:`String<java.lang.String>`
+
+
+            
+                |          :ref:`TypeMirror<javax.lang.model.type.TypeMirror>` typeMirror
+
+                |          returns :ref:`String<java.lang.String>`
+
+
+            | **getEnumConstants** (enumTypeElement) → :ref:`VariableElement><java.util.List<javax.lang.model.element.VariableElement>>`
+| Gets the enum constants from a TypeElement that represents an enum type.
+|          :ref:`TypeElement<javax.lang.model.element.TypeElement>` enumTypeElement
+|          returns :ref:`VariableElement><java.util.List<javax.lang.model.element.VariableElement>>`
+
+
+
+| **isInnerClass** (classElement) → boolean
+|          :ref:`TypeElement<javax.lang.model.element.TypeElement>` classElement
+|          returns boolean
+
+
+
+| **isException** (typeElement) → boolean
+|          :ref:`TypeElement<javax.lang.model.element.TypeElement>` typeElement
+|          returns boolean
+
+
+
+| **isError** (typeElement) → boolean
+|          :ref:`TypeElement<javax.lang.model.element.TypeElement>` typeElement
+|          returns boolean
+
+
+
+| **isSerializable** (typeElement) → boolean
+|          :ref:`TypeElement<javax.lang.model.element.TypeElement>` typeElement
+|          returns boolean
+
+
+
+| **isExternalizable** (typeElement) → boolean
+|          :ref:`TypeElement<javax.lang.model.element.TypeElement>` typeElement
+|          returns boolean
+
+
+
+
+..  _com.manticore.tools.xmldoclet.XmlDoclet:
 
 =======================================================================
 XmlDoclet
 =======================================================================
 
-*extends:* :ref:`Object<java.lang.Object>`
-
-| Doclet class.
+*extends:* :ref:`Object<java.lang.Object>` *implements:* :ref:`Doclet<jdk.javadoc.doclet.Doclet>` 
 
 | **XmlDoclet** ()
 
 
-| **optionLength** (optionName) → int
-| Check for doclet-added options. Returns the number of arguments you must specify on the command line for the given option. For example, "-d docs" would return 2.
-| This method is required if the doclet contains any options. If this method is missing, Javadoc will print an invalid flag error for every option.
-|          :ref:`String<java.lang.String>` optionName  | optionName The name of the option.
-|          returns int  | number of arguments on the command line for an option including the option name itself. Zero return means option not known. Negative value means error occurred.
+| *@Override*
+| **init** (locale, reporter)
+|          :ref:`Locale<java.util.Locale>` locale
+|          :ref:`Reporter<jdk.javadoc.doclet.Reporter>` reporter
+
+
+| *@Override*
+| **getName** () → :ref:`String<java.lang.String>`
+|          returns :ref:`String<java.lang.String>`
 
 
 
-| **validOptions** (optionsArrayArray, reporter) → boolean
-| Check that options have the correct arguments.
-| This method is not required, but is recommended, as every option will be considered valid if this method is not present. It will default gracefully (to true) if absent.
-| Printing option related error messages (using the provided DocErrorReporter) is the responsibility of this method.
-|          :ref:`String<java.lang.String>` optionsArrayArray  | optionsArrayArray The two-dimensional array of options.
-|          :ref:`DocErrorReporter<com.sun.javadoc.DocErrorReporter>` reporter  | reporter The error reporter.
-|          returns boolean  | ``true`` if the options are valid.
+| *@Override*
+| **getSupportedOptions** () → :ref:`CustomOption><java.util.Set<? extends com.manticore.tools.xmldoclet.CustomOption>>`
+|          returns :ref:`CustomOption><java.util.Set<? extends com.manticore.tools.xmldoclet.CustomOption>>`
 
 
 
-| **start** (rootDoc) → boolean
-| Processes the JavaDoc documentation.
-| This method is required for all doclets.
-|          :ref:`RootDoc<com.sun.javadoc.RootDoc>` rootDoc  | rootDoc The root of the documentation tree.
-|          returns boolean  | ``true`` if processing was successful.
+| *@Override*
+| **getSupportedSourceVersion** () → :ref:`SourceVersion<javax.lang.model.SourceVersion>`
+|          returns :ref:`SourceVersion<javax.lang.model.SourceVersion>`
+
+
+
+| *@Override*
+| **run** (env) → boolean
+| Processes the JavaDoc documentation. This method is required for all doclets.
+|          :ref:`DocletEnvironment<jdk.javadoc.doclet.DocletEnvironment>` env
+|          returns boolean
 
 
 
@@ -210,54 +491,43 @@ XmlDoclet
 |          :ref:`InputStream<java.io.InputStream>` xsltInputStream
 |          :ref:`File<java.io.File>` xmlFile
 |          :ref:`File<java.io.File>` outFile
-|          :ref:`Map<java.util.Map>` parameters
+|          :ref:`String><java.util.Map<java.lang.String,java.lang.String>>` parameters
 
 
-| **save** (commandLine, root)
+| **save** (root)
 | Save XML object model to a file via JAXB.
-|          CommandLine commandLine  | commandLine the parsed command line arguments
-|          :ref:`Root<com.manticore.tools.xmldoclet.xmldoclet.xjc.Root>` root  | root the document root
+|          :ref:`Root<com.manticore.tools.xmldoclet.xjc.Root>` root
 
 
-| **languageVersion** () → :ref:`LanguageVersion<com.sun.javadoc.LanguageVersion>`
-| Return the version of the Java Programming Language supported by this doclet.
-| This method is required by any doclet supporting a language version newer than 1.1.
-| This Doclet supports Java 5.
-|          returns :ref:`LanguageVersion<com.sun.javadoc.LanguageVersion>`  | LanguageVersion#JAVA_1_5
-
-
-
-| **parseCommandLine** (optionsArrayArray) → CommandLine
-| Parse the given options.
-|          :ref:`String<java.lang.String>` optionsArrayArray  | optionsArrayArray The two dimensional array of options.
-|          returns CommandLine  | the parsed command line arguments.
+| **getRoot** () → :ref:`Root<com.manticore.tools.xmldoclet.xjc.Root>`
+|          returns :ref:`Root<com.manticore.tools.xmldoclet.xjc.Root>`
 
 
 
 
-..  _com.manticore.tools.xmldoclet.xmldoclet.xjc:
+..  _com.manticore.tools.xmldoclet.xjc:
 ***********************************************************************
 xjc
 ***********************************************************************
 
-..  _com.manticore.tools.xmldoclet.xmldoclet.xjc.Annotation:
+..  _com.manticore.tools.xmldoclet.xjc.Annotation:
 
 =======================================================================
 Annotation
 =======================================================================
 
-*extends:* :ref:`Object<java.lang.Object>`
+*extends:* :ref:`Object<java.lang.Object>` 
 
-|
-| Java class for annotation complex type.
-| The following schema fragment specifies the expected content contained within this class. `&lt;complexType name="annotation"&gt; &lt;complexContent&gt; &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt; &lt;sequence&gt; &lt;element name="comment" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt; &lt;element name="tag" type="{}tagInfo" maxOccurs="unbounded" minOccurs="0"/&gt; &lt;element name="element" type="{}annotationElement" maxOccurs="unbounded" minOccurs="0"/&gt; &lt;element name="annotation" type="{}annotationInstance" maxOccurs="unbounded" minOccurs="0"/&gt; &lt;/sequence&gt; &lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" /&gt; &lt;attribute name="qualified" type="{http://www.w3.org/2001/XMLSchema}string" /&gt; &lt;attribute name="scope" type="{}scope" /&gt; &lt;attribute name="included" type="{http://www.w3.org/2001/XMLSchema}boolean" default="true" /&gt; &lt;/restriction&gt; &lt;/complexContent&gt; &lt;/complexType&gt;`
+| 
+| Java class for annotation complex type. 
+| The following schema fragment specifies the expected content contained within this class. `{@code ``complexType name="annotation"`` ``complexContent`` ``restriction base="{http://www.w3.org/2001/XMLSchema}anyType"`` ``sequence`` ``element name="comment" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"`` ``element name="tag" type="{}tagInfo" maxOccurs="unbounded" minOccurs="0"`` ``element name="element" type="{}annotationElement" maxOccurs="unbounded" minOccurs="0"`` ``element name="annotation" type="{}annotationInstance" maxOccurs="unbounded" minOccurs="0"`` ``/sequence`` ``attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string"`` ``attribute name="qualified" type="{http://www.w3.org/2001/XMLSchema}string"`` ``attribute name="scope" type="{}scope"`` ``attribute name="included" type="{http://www.w3.org/2001/XMLSchema}boolean" default="true"`` ``/restriction`` ``/complexContent`` ``/complexType`` }`
 
 | **Annotation** ()
 
 
 | **getComment** () → :ref:`String<java.lang.String>`
 | Gets the value of the comment property.
-|          returns :ref:`String<java.lang.String>`  | possible object is `String`
+|          returns :ref:`String<java.lang.String>`
 
 
 
@@ -266,36 +536,36 @@ Annotation
 |          :ref:`String<java.lang.String>` value
 
 
-| **getTag** () → :ref:`List<java.util.List>`
-| Gets the value of the tag property.
-| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the tag property.
-| For example, to add a new item, do as follows: `getTag().add(newItem);`
-| Objects of the following type(s) are allowed in the list `TagInfo`
-|          returns :ref:`List<java.util.List>`
+| **getTag** () → :ref:`TagInfo><java.util.List<com.manticore.tools.xmldoclet.xjc.TagInfo>>`
+| Gets the value of the tag property. 
+| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the tag property. 
+| For example, to add a new item, do as follows: `getTag().add(newItem);` 
+| Objects of the following type(s) are allowed in the list ,`TagInfo`,
+|          returns :ref:`TagInfo><java.util.List<com.manticore.tools.xmldoclet.xjc.TagInfo>>`
 
 
 
-| **getElement** () → :ref:`List<java.util.List>`
-| Gets the value of the element property.
-| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the element property.
-| For example, to add a new item, do as follows: `getElement().add(newItem);`
-| Objects of the following type(s) are allowed in the list `AnnotationElement`
-|          returns :ref:`List<java.util.List>`
+| **getElement** () → :ref:`AnnotationElement><java.util.List<com.manticore.tools.xmldoclet.xjc.AnnotationElement>>`
+| Gets the value of the element property. 
+| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the element property. 
+| For example, to add a new item, do as follows: `getElement().add(newItem);` 
+| Objects of the following type(s) are allowed in the list ,`AnnotationElement`,
+|          returns :ref:`AnnotationElement><java.util.List<com.manticore.tools.xmldoclet.xjc.AnnotationElement>>`
 
 
 
-| **getAnnotation** () → :ref:`List<java.util.List>`
-| Gets the value of the annotation property.
-| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the annotation property.
-| For example, to add a new item, do as follows: `getAnnotation().add(newItem);`
-| Objects of the following type(s) are allowed in the list `AnnotationInstance`
-|          returns :ref:`List<java.util.List>`
+| **getAnnotation** () → :ref:`AnnotationInstance><java.util.List<com.manticore.tools.xmldoclet.xjc.AnnotationInstance>>`
+| Gets the value of the annotation property. 
+| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the annotation property. 
+| For example, to add a new item, do as follows: `getAnnotation().add(newItem);` 
+| Objects of the following type(s) are allowed in the list ,`AnnotationInstance`,
+|          returns :ref:`AnnotationInstance><java.util.List<com.manticore.tools.xmldoclet.xjc.AnnotationInstance>>`
 
 
 
 | **getName** () → :ref:`String<java.lang.String>`
 | Gets the value of the name property.
-|          returns :ref:`String<java.lang.String>`  | possible object is `String`
+|          returns :ref:`String<java.lang.String>`
 
 
 
@@ -306,7 +576,7 @@ Annotation
 
 | **getQualified** () → :ref:`String<java.lang.String>`
 | Gets the value of the qualified property.
-|          returns :ref:`String<java.lang.String>`  | possible object is `String`
+|          returns :ref:`String<java.lang.String>`
 
 
 
@@ -317,7 +587,7 @@ Annotation
 
 | **getScope** () → :ref:`String<java.lang.String>`
 | Gets the value of the scope property.
-|          returns :ref:`String<java.lang.String>`  | possible object is `String`
+|          returns :ref:`String<java.lang.String>`
 
 
 
@@ -328,7 +598,7 @@ Annotation
 
 | **isIncluded** () → boolean
 | Gets the value of the included property.
-|          returns boolean  | possible object is `Boolean`
+|          returns boolean
 
 
 
@@ -338,53 +608,53 @@ Annotation
 
 
 
-..  _com.manticore.tools.xmldoclet.xmldoclet.xjc.AnnotationArgument:
+..  _com.manticore.tools.xmldoclet.xjc.AnnotationArgument:
 
 =======================================================================
 AnnotationArgument
 =======================================================================
 
-*extends:* :ref:`Object<java.lang.Object>`
+*extends:* :ref:`Object<java.lang.Object>` 
 
-|
-| Java class for annotationArgument complex type.
-| The following schema fragment specifies the expected content contained within this class. `&lt;complexType name="annotationArgument"&gt; &lt;complexContent&gt; &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt; &lt;sequence&gt; &lt;element name="type" type="{}typeInfo" minOccurs="0"/&gt; &lt;choice&gt; &lt;element name="value" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/&gt; &lt;element name="annotation" type="{}annotationInstance" maxOccurs="unbounded" minOccurs="0"/&gt; &lt;/choice&gt; &lt;/sequence&gt; &lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" /&gt; &lt;attribute name="primitive" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" /&gt; &lt;attribute name="array" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" /&gt; &lt;/restriction&gt; &lt;/complexContent&gt; &lt;/complexType&gt;`
+| 
+| Java class for annotationArgument complex type. 
+| The following schema fragment specifies the expected content contained within this class. `{@code ``complexType name="annotationArgument"`` ``complexContent`` ``restriction base="{http://www.w3.org/2001/XMLSchema}anyType"`` ``sequence`` ``element name="type" type="{}typeInfo" minOccurs="0"`` ``choice`` ``element name="value" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"`` ``element name="annotation" type="{}annotationInstance" maxOccurs="unbounded" minOccurs="0"`` ``/choice`` ``/sequence`` ``attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string"`` ``attribute name="primitive" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false"`` ``attribute name="array" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false"`` ``/restriction`` ``/complexContent`` ``/complexType`` }`
 
 | **AnnotationArgument** ()
 
 
-| **getType** () → :ref:`TypeInfo<com.manticore.tools.xmldoclet.xmldoclet.xjc.TypeInfo>`
+| **getType** () → :ref:`TypeInfo<com.manticore.tools.xmldoclet.xjc.TypeInfo>`
 | Gets the value of the type property.
-|          returns :ref:`TypeInfo<com.manticore.tools.xmldoclet.xmldoclet.xjc.TypeInfo>`  | possible object is `TypeInfo`
+|          returns :ref:`TypeInfo<com.manticore.tools.xmldoclet.xjc.TypeInfo>`
 
 
 
 | **setType** (value)
 | Sets the value of the type property.
-|          :ref:`TypeInfo<com.manticore.tools.xmldoclet.xmldoclet.xjc.TypeInfo>` value
+|          :ref:`TypeInfo<com.manticore.tools.xmldoclet.xjc.TypeInfo>` value
 
 
-| **getValue** () → :ref:`List<java.util.List>`
-| Gets the value of the value property.
-| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the value property.
-| For example, to add a new item, do as follows: `getValue().add(newItem);`
-| Objects of the following type(s) are allowed in the list `String`
-|          returns :ref:`List<java.util.List>`
+| **getValue** () → :ref:`String><java.util.List<java.lang.String>>`
+| Gets the value of the value property. 
+| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the value property. 
+| For example, to add a new item, do as follows: `getValue().add(newItem);` 
+| Objects of the following type(s) are allowed in the list ,`String`,
+|          returns :ref:`String><java.util.List<java.lang.String>>`
 
 
 
-| **getAnnotation** () → :ref:`List<java.util.List>`
-| Gets the value of the annotation property.
-| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the annotation property.
-| For example, to add a new item, do as follows: `getAnnotation().add(newItem);`
-| Objects of the following type(s) are allowed in the list `AnnotationInstance`
-|          returns :ref:`List<java.util.List>`
+| **getAnnotation** () → :ref:`AnnotationInstance><java.util.List<com.manticore.tools.xmldoclet.xjc.AnnotationInstance>>`
+| Gets the value of the annotation property. 
+| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the annotation property. 
+| For example, to add a new item, do as follows: `getAnnotation().add(newItem);` 
+| Objects of the following type(s) are allowed in the list ,`AnnotationInstance`,
+|          returns :ref:`AnnotationInstance><java.util.List<com.manticore.tools.xmldoclet.xjc.AnnotationInstance>>`
 
 
 
 | **getName** () → :ref:`String<java.lang.String>`
 | Gets the value of the name property.
-|          returns :ref:`String<java.lang.String>`  | possible object is `String`
+|          returns :ref:`String<java.lang.String>`
 
 
 
@@ -395,7 +665,7 @@ AnnotationArgument
 
 | **isPrimitive** () → boolean
 | Gets the value of the primitive property.
-|          returns boolean  | possible object is `Boolean`
+|          returns boolean
 
 
 
@@ -406,7 +676,7 @@ AnnotationArgument
 
 | **isArray** () → boolean
 | Gets the value of the array property.
-|          returns boolean  | possible object is `Boolean`
+|          returns boolean
 
 
 
@@ -416,35 +686,35 @@ AnnotationArgument
 
 
 
-..  _com.manticore.tools.xmldoclet.xmldoclet.xjc.AnnotationElement:
+..  _com.manticore.tools.xmldoclet.xjc.AnnotationElement:
 
 =======================================================================
 AnnotationElement
 =======================================================================
 
-*extends:* :ref:`Object<java.lang.Object>`
+*extends:* :ref:`Object<java.lang.Object>` 
 
-|
-| Java class for annotationElement complex type.
-| The following schema fragment specifies the expected content contained within this class. `&lt;complexType name="annotationElement"&gt; &lt;complexContent&gt; &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt; &lt;sequence&gt; &lt;element name="type" type="{}typeInfo" minOccurs="0"/&gt; &lt;/sequence&gt; &lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" /&gt; &lt;attribute name="qualified" type="{http://www.w3.org/2001/XMLSchema}string" /&gt; &lt;attribute name="default" type="{http://www.w3.org/2001/XMLSchema}string" /&gt; &lt;/restriction&gt; &lt;/complexContent&gt; &lt;/complexType&gt;`
+| 
+| Java class for annotationElement complex type. 
+| The following schema fragment specifies the expected content contained within this class. `{@code ``complexType name="annotationElement"`` ``complexContent`` ``restriction base="{http://www.w3.org/2001/XMLSchema}anyType"`` ``sequence`` ``element name="type" type="{}typeInfo" minOccurs="0"`` ``/sequence`` ``attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string"`` ``attribute name="qualified" type="{http://www.w3.org/2001/XMLSchema}string"`` ``attribute name="default" type="{http://www.w3.org/2001/XMLSchema}string"`` ``/restriction`` ``/complexContent`` ``/complexType`` }`
 
 | **AnnotationElement** ()
 
 
-| **getType** () → :ref:`TypeInfo<com.manticore.tools.xmldoclet.xmldoclet.xjc.TypeInfo>`
+| **getType** () → :ref:`TypeInfo<com.manticore.tools.xmldoclet.xjc.TypeInfo>`
 | Gets the value of the type property.
-|          returns :ref:`TypeInfo<com.manticore.tools.xmldoclet.xmldoclet.xjc.TypeInfo>`  | possible object is `TypeInfo`
+|          returns :ref:`TypeInfo<com.manticore.tools.xmldoclet.xjc.TypeInfo>`
 
 
 
 | **setType** (value)
 | Sets the value of the type property.
-|          :ref:`TypeInfo<com.manticore.tools.xmldoclet.xmldoclet.xjc.TypeInfo>` value
+|          :ref:`TypeInfo<com.manticore.tools.xmldoclet.xjc.TypeInfo>` value
 
 
 | **getName** () → :ref:`String<java.lang.String>`
 | Gets the value of the name property.
-|          returns :ref:`String<java.lang.String>`  | possible object is `String`
+|          returns :ref:`String<java.lang.String>`
 
 
 
@@ -455,7 +725,7 @@ AnnotationElement
 
 | **getQualified** () → :ref:`String<java.lang.String>`
 | Gets the value of the qualified property.
-|          returns :ref:`String<java.lang.String>`  | possible object is `String`
+|          returns :ref:`String<java.lang.String>`
 
 
 
@@ -466,7 +736,7 @@ AnnotationElement
 
 | **getDefault** () → :ref:`String<java.lang.String>`
 | Gets the value of the default property.
-|          returns :ref:`String<java.lang.String>`  | possible object is `String`
+|          returns :ref:`String<java.lang.String>`
 
 
 
@@ -476,33 +746,33 @@ AnnotationElement
 
 
 
-..  _com.manticore.tools.xmldoclet.xmldoclet.xjc.AnnotationInstance:
+..  _com.manticore.tools.xmldoclet.xjc.AnnotationInstance:
 
 =======================================================================
 AnnotationInstance
 =======================================================================
 
-*extends:* :ref:`Object<java.lang.Object>`
+*extends:* :ref:`Object<java.lang.Object>` 
 
-|
-| Java class for annotationInstance complex type.
-| The following schema fragment specifies the expected content contained within this class. `&lt;complexType name="annotationInstance"&gt; &lt;complexContent&gt; &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt; &lt;sequence&gt; &lt;element name="argument" type="{}annotationArgument" maxOccurs="unbounded" minOccurs="0"/&gt; &lt;/sequence&gt; &lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" /&gt; &lt;attribute name="qualified" type="{http://www.w3.org/2001/XMLSchema}string" /&gt; &lt;/restriction&gt; &lt;/complexContent&gt; &lt;/complexType&gt;`
+| 
+| Java class for annotationInstance complex type. 
+| The following schema fragment specifies the expected content contained within this class. `{@code ``complexType name="annotationInstance"`` ``complexContent`` ``restriction base="{http://www.w3.org/2001/XMLSchema}anyType"`` ``sequence`` ``element name="argument" type="{}annotationArgument" maxOccurs="unbounded" minOccurs="0"`` ``/sequence`` ``attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string"`` ``attribute name="qualified" type="{http://www.w3.org/2001/XMLSchema}string"`` ``/restriction`` ``/complexContent`` ``/complexType`` }`
 
 | **AnnotationInstance** ()
 
 
-| **getArgument** () → :ref:`List<java.util.List>`
-| Gets the value of the argument property.
-| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the argument property.
-| For example, to add a new item, do as follows: `getArgument().add(newItem);`
-| Objects of the following type(s) are allowed in the list `AnnotationArgument`
-|          returns :ref:`List<java.util.List>`
+| **getArgument** () → :ref:`AnnotationArgument><java.util.List<com.manticore.tools.xmldoclet.xjc.AnnotationArgument>>`
+| Gets the value of the argument property. 
+| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the argument property. 
+| For example, to add a new item, do as follows: `getArgument().add(newItem);` 
+| Objects of the following type(s) are allowed in the list ,`AnnotationArgument`,
+|          returns :ref:`AnnotationArgument><java.util.List<com.manticore.tools.xmldoclet.xjc.AnnotationArgument>>`
 
 
 
 | **getName** () → :ref:`String<java.lang.String>`
 | Gets the value of the name property.
-|          returns :ref:`String<java.lang.String>`  | possible object is `String`
+|          returns :ref:`String<java.lang.String>`
 
 
 
@@ -513,7 +783,7 @@ AnnotationInstance
 
 | **getQualified** () → :ref:`String<java.lang.String>`
 | Gets the value of the qualified property.
-|          returns :ref:`String<java.lang.String>`  | possible object is `String`
+|          returns :ref:`String<java.lang.String>`
 
 
 
@@ -523,24 +793,24 @@ AnnotationInstance
 
 
 
-..  _com.manticore.tools.xmldoclet.xmldoclet.xjc.Class:
+..  _com.manticore.tools.xmldoclet.xjc.Class:
 
 =======================================================================
 Class
 =======================================================================
 
-*extends:* :ref:`Object<java.lang.Object>`
+*extends:* :ref:`Object<java.lang.Object>` 
 
-|
-| Java class for class complex type.
-| The following schema fragment specifies the expected content contained within this class. `&lt;complexType name="class"&gt; &lt;complexContent&gt; &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt; &lt;sequence&gt; &lt;element name="comment" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt; &lt;element name="tag" type="{}tagInfo" maxOccurs="unbounded" minOccurs="0"/&gt; &lt;element name="generic" type="{}typeParameter" maxOccurs="unbounded" minOccurs="0"/&gt; &lt;element name="class" type="{}typeInfo" minOccurs="0"/&gt; &lt;element name="interface" type="{}typeInfo" maxOccurs="unbounded" minOccurs="0"/&gt; &lt;element name="constructor" type="{}constructor" maxOccurs="unbounded" minOccurs="0"/&gt; &lt;element name="method" type="{}method" maxOccurs="unbounded" minOccurs="0"/&gt; &lt;element name="annotation" type="{}annotationInstance" maxOccurs="unbounded" minOccurs="0"/&gt; &lt;element name="field" type="{}field" maxOccurs="unbounded" minOccurs="0"/&gt; &lt;/sequence&gt; &lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" /&gt; &lt;attribute name="qualified" type="{http://www.w3.org/2001/XMLSchema}string" /&gt; &lt;attribute name="scope" type="{}scope" /&gt; &lt;attribute name="abstract" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" /&gt; &lt;attribute name="error" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" /&gt; &lt;attribute name="exception" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" /&gt; &lt;attribute name="externalizable" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" /&gt; &lt;attribute name="included" type="{http://www.w3.org/2001/XMLSchema}boolean" default="true" /&gt; &lt;attribute name="serializable" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" /&gt; &lt;/restriction&gt; &lt;/complexContent&gt; &lt;/complexType&gt;`
+| 
+| Java class for class complex type. 
+| The following schema fragment specifies the expected content contained within this class. `{@code ``complexType name="class"`` ``complexContent`` ``restriction base="{http://www.w3.org/2001/XMLSchema}anyType"`` ``sequence`` ``element name="comment" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"`` ``element name="tag" type="{}tagInfo" maxOccurs="unbounded" minOccurs="0"`` ``element name="generic" type="{}typeParameter" maxOccurs="unbounded" minOccurs="0"`` ``element name="class" type="{}typeInfo" minOccurs="0"`` ``element name="interface" type="{}typeInfo" maxOccurs="unbounded" minOccurs="0"`` ``element name="constructor" type="{}constructor" maxOccurs="unbounded" minOccurs="0"`` ``element name="method" type="{}method" maxOccurs="unbounded" minOccurs="0"`` ``element name="annotation" type="{}annotationInstance" maxOccurs="unbounded" minOccurs="0"`` ``element name="field" type="{}field" maxOccurs="unbounded" minOccurs="0"`` ``/sequence`` ``attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string"`` ``attribute name="qualified" type="{http://www.w3.org/2001/XMLSchema}string"`` ``attribute name="scope" type="{}scope"`` ``attribute name="abstract" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false"`` ``attribute name="error" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false"`` ``attribute name="exception" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false"`` ``attribute name="externalizable" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false"`` ``attribute name="included" type="{http://www.w3.org/2001/XMLSchema}boolean" default="true"`` ``attribute name="serializable" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false"`` ``/restriction`` ``/complexContent`` ``/complexType`` }`
 
 | **Class** ()
 
 
 | **getComment** () → :ref:`String<java.lang.String>`
 | Gets the value of the comment property.
-|          returns :ref:`String<java.lang.String>`  | possible object is `String`
+|          returns :ref:`String<java.lang.String>`
 
 
 
@@ -549,83 +819,83 @@ Class
 |          :ref:`String<java.lang.String>` value
 
 
-| **getTag** () → :ref:`List<java.util.List>`
-| Gets the value of the tag property.
-| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the tag property.
-| For example, to add a new item, do as follows: `getTag().add(newItem);`
-| Objects of the following type(s) are allowed in the list `TagInfo`
-|          returns :ref:`List<java.util.List>`
+| **getTag** () → :ref:`TagInfo><java.util.List<com.manticore.tools.xmldoclet.xjc.TagInfo>>`
+| Gets the value of the tag property. 
+| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the tag property. 
+| For example, to add a new item, do as follows: `getTag().add(newItem);` 
+| Objects of the following type(s) are allowed in the list ,`TagInfo`,
+|          returns :ref:`TagInfo><java.util.List<com.manticore.tools.xmldoclet.xjc.TagInfo>>`
 
 
 
-| **getGeneric** () → :ref:`List<java.util.List>`
-| Gets the value of the generic property.
-| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the generic property.
-| For example, to add a new item, do as follows: `getGeneric().add(newItem);`
-| Objects of the following type(s) are allowed in the list `TypeParameter`
-|          returns :ref:`List<java.util.List>`
+| **getGeneric** () → :ref:`TypeParameter><java.util.List<com.manticore.tools.xmldoclet.xjc.TypeParameter>>`
+| Gets the value of the generic property. 
+| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the generic property. 
+| For example, to add a new item, do as follows: `getGeneric().add(newItem);` 
+| Objects of the following type(s) are allowed in the list ,`TypeParameter`,
+|          returns :ref:`TypeParameter><java.util.List<com.manticore.tools.xmldoclet.xjc.TypeParameter>>`
 
 
 
-| **getClazz** () → :ref:`TypeInfo<com.manticore.tools.xmldoclet.xmldoclet.xjc.TypeInfo>`
+| **getClazz** () → :ref:`TypeInfo<com.manticore.tools.xmldoclet.xjc.TypeInfo>`
 | Gets the value of the clazz property.
-|          returns :ref:`TypeInfo<com.manticore.tools.xmldoclet.xmldoclet.xjc.TypeInfo>`  | possible object is `TypeInfo`
+|          returns :ref:`TypeInfo<com.manticore.tools.xmldoclet.xjc.TypeInfo>`
 
 
 
 | **setClazz** (value)
 | Sets the value of the clazz property.
-|          :ref:`TypeInfo<com.manticore.tools.xmldoclet.xmldoclet.xjc.TypeInfo>` value
+|          :ref:`TypeInfo<com.manticore.tools.xmldoclet.xjc.TypeInfo>` value
 
 
-| **getInterface** () → :ref:`List<java.util.List>`
-| Gets the value of the interface property.
-| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the interface property.
-| For example, to add a new item, do as follows: `getInterface().add(newItem);`
-| Objects of the following type(s) are allowed in the list `TypeInfo`
-|          returns :ref:`List<java.util.List>`
-
-
-
-| **getConstructor** () → :ref:`List<java.util.List>`
-| Gets the value of the constructor property.
-| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the constructor property.
-| For example, to add a new item, do as follows: `getConstructor().add(newItem);`
-| Objects of the following type(s) are allowed in the list `Constructor`
-|          returns :ref:`List<java.util.List>`
+| **getInterface** () → :ref:`TypeInfo><java.util.List<com.manticore.tools.xmldoclet.xjc.TypeInfo>>`
+| Gets the value of the interface property. 
+| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the interface property. 
+| For example, to add a new item, do as follows: `getInterface().add(newItem);` 
+| Objects of the following type(s) are allowed in the list ,`TypeInfo`,
+|          returns :ref:`TypeInfo><java.util.List<com.manticore.tools.xmldoclet.xjc.TypeInfo>>`
 
 
 
-| **getMethod** () → :ref:`List<java.util.List>`
-| Gets the value of the method property.
-| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the method property.
-| For example, to add a new item, do as follows: `getMethod().add(newItem);`
-| Objects of the following type(s) are allowed in the list `Method`
-|          returns :ref:`List<java.util.List>`
+| **getConstructor** () → :ref:`Constructor><java.util.List<com.manticore.tools.xmldoclet.xjc.Constructor>>`
+| Gets the value of the constructor property. 
+| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the constructor property. 
+| For example, to add a new item, do as follows: `getConstructor().add(newItem);` 
+| Objects of the following type(s) are allowed in the list ,`Constructor`,
+|          returns :ref:`Constructor><java.util.List<com.manticore.tools.xmldoclet.xjc.Constructor>>`
 
 
 
-| **getAnnotation** () → :ref:`List<java.util.List>`
-| Gets the value of the annotation property.
-| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the annotation property.
-| For example, to add a new item, do as follows: `getAnnotation().add(newItem);`
-| Objects of the following type(s) are allowed in the list `AnnotationInstance`
-|          returns :ref:`List<java.util.List>`
+| **getMethod** () → :ref:`Method><java.util.List<com.manticore.tools.xmldoclet.xjc.Method>>`
+| Gets the value of the method property. 
+| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the method property. 
+| For example, to add a new item, do as follows: `getMethod().add(newItem);` 
+| Objects of the following type(s) are allowed in the list ,`Method`,
+|          returns :ref:`Method><java.util.List<com.manticore.tools.xmldoclet.xjc.Method>>`
 
 
 
-| **getField** () → :ref:`List<java.util.List>`
-| Gets the value of the field property.
-| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the field property.
-| For example, to add a new item, do as follows: `getField().add(newItem);`
-| Objects of the following type(s) are allowed in the list `Field`
-|          returns :ref:`List<java.util.List>`
+| **getAnnotation** () → :ref:`AnnotationInstance><java.util.List<com.manticore.tools.xmldoclet.xjc.AnnotationInstance>>`
+| Gets the value of the annotation property. 
+| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the annotation property. 
+| For example, to add a new item, do as follows: `getAnnotation().add(newItem);` 
+| Objects of the following type(s) are allowed in the list ,`AnnotationInstance`,
+|          returns :ref:`AnnotationInstance><java.util.List<com.manticore.tools.xmldoclet.xjc.AnnotationInstance>>`
+
+
+
+| **getField** () → :ref:`Field><java.util.List<com.manticore.tools.xmldoclet.xjc.Field>>`
+| Gets the value of the field property. 
+| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the field property. 
+| For example, to add a new item, do as follows: `getField().add(newItem);` 
+| Objects of the following type(s) are allowed in the list ,`Field`,
+|          returns :ref:`Field><java.util.List<com.manticore.tools.xmldoclet.xjc.Field>>`
 
 
 
 | **getName** () → :ref:`String<java.lang.String>`
 | Gets the value of the name property.
-|          returns :ref:`String<java.lang.String>`  | possible object is `String`
+|          returns :ref:`String<java.lang.String>`
 
 
 
@@ -636,7 +906,7 @@ Class
 
 | **getQualified** () → :ref:`String<java.lang.String>`
 | Gets the value of the qualified property.
-|          returns :ref:`String<java.lang.String>`  | possible object is `String`
+|          returns :ref:`String<java.lang.String>`
 
 
 
@@ -647,7 +917,7 @@ Class
 
 | **getScope** () → :ref:`String<java.lang.String>`
 | Gets the value of the scope property.
-|          returns :ref:`String<java.lang.String>`  | possible object is `String`
+|          returns :ref:`String<java.lang.String>`
 
 
 
@@ -658,7 +928,7 @@ Class
 
 | **isAbstract** () → boolean
 | Gets the value of the abstract property.
-|          returns boolean  | possible object is `Boolean`
+|          returns boolean
 
 
 
@@ -669,7 +939,7 @@ Class
 
 | **isError** () → boolean
 | Gets the value of the error property.
-|          returns boolean  | possible object is `Boolean`
+|          returns boolean
 
 
 
@@ -680,7 +950,7 @@ Class
 
 | **isException** () → boolean
 | Gets the value of the exception property.
-|          returns boolean  | possible object is `Boolean`
+|          returns boolean
 
 
 
@@ -691,7 +961,7 @@ Class
 
 | **isExternalizable** () → boolean
 | Gets the value of the externalizable property.
-|          returns boolean  | possible object is `Boolean`
+|          returns boolean
 
 
 
@@ -702,7 +972,7 @@ Class
 
 | **isIncluded** () → boolean
 | Gets the value of the included property.
-|          returns boolean  | possible object is `Boolean`
+|          returns boolean
 
 
 
@@ -713,7 +983,7 @@ Class
 
 | **isSerializable** () → boolean
 | Gets the value of the serializable property.
-|          returns boolean  | possible object is `Boolean`
+|          returns boolean
 
 
 
@@ -723,24 +993,24 @@ Class
 
 
 
-..  _com.manticore.tools.xmldoclet.xmldoclet.xjc.Constructor:
+..  _com.manticore.tools.xmldoclet.xjc.Constructor:
 
 =======================================================================
 Constructor
 =======================================================================
 
-*extends:* :ref:`Object<java.lang.Object>`
+*extends:* :ref:`Object<java.lang.Object>` 
 
-|
-| Java class for constructor complex type.
-| The following schema fragment specifies the expected content contained within this class. `&lt;complexType name="constructor"&gt; &lt;complexContent&gt; &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt; &lt;sequence&gt; &lt;element name="comment" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt; &lt;element name="tag" type="{}tagInfo" maxOccurs="unbounded" minOccurs="0"/&gt; &lt;element name="parameter" type="{}methodParameter" maxOccurs="unbounded" minOccurs="0"/&gt; &lt;element name="exception" type="{}typeInfo" maxOccurs="unbounded" minOccurs="0"/&gt; &lt;element name="annotation" type="{}annotationInstance" maxOccurs="unbounded" minOccurs="0"/&gt; &lt;/sequence&gt; &lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" /&gt; &lt;attribute name="signature" type="{http://www.w3.org/2001/XMLSchema}string" /&gt; &lt;attribute name="qualified" type="{http://www.w3.org/2001/XMLSchema}string" /&gt; &lt;attribute name="scope" type="{}scope" /&gt; &lt;attribute name="final" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" /&gt; &lt;attribute name="included" type="{http://www.w3.org/2001/XMLSchema}boolean" default="true" /&gt; &lt;attribute name="native" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" /&gt; &lt;attribute name="synchronized" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" /&gt; &lt;attribute name="static" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" /&gt; &lt;attribute name="varArgs" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" /&gt; &lt;/restriction&gt; &lt;/complexContent&gt; &lt;/complexType&gt;`
+| 
+| Java class for constructor complex type. 
+| The following schema fragment specifies the expected content contained within this class. `{@code ``complexType name="constructor"`` ``complexContent`` ``restriction base="{http://www.w3.org/2001/XMLSchema}anyType"`` ``sequence`` ``element name="comment" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"`` ``element name="tag" type="{}tagInfo" maxOccurs="unbounded" minOccurs="0"`` ``element name="parameter" type="{}methodParameter" maxOccurs="unbounded" minOccurs="0"`` ``element name="exception" type="{}typeInfo" maxOccurs="unbounded" minOccurs="0"`` ``element name="annotation" type="{}annotationInstance" maxOccurs="unbounded" minOccurs="0"`` ``/sequence`` ``attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string"`` ``attribute name="signature" type="{http://www.w3.org/2001/XMLSchema}string"`` ``attribute name="qualified" type="{http://www.w3.org/2001/XMLSchema}string"`` ``attribute name="scope" type="{}scope"`` ``attribute name="final" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false"`` ``attribute name="included" type="{http://www.w3.org/2001/XMLSchema}boolean" default="true"`` ``attribute name="native" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false"`` ``attribute name="synchronized" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false"`` ``attribute name="static" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false"`` ``attribute name="varArgs" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false"`` ``/restriction`` ``/complexContent`` ``/complexType`` }`
 
 | **Constructor** ()
 
 
 | **getComment** () → :ref:`String<java.lang.String>`
 | Gets the value of the comment property.
-|          returns :ref:`String<java.lang.String>`  | possible object is `String`
+|          returns :ref:`String<java.lang.String>`
 
 
 
@@ -749,45 +1019,45 @@ Constructor
 |          :ref:`String<java.lang.String>` value
 
 
-| **getTag** () → :ref:`List<java.util.List>`
-| Gets the value of the tag property.
-| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the tag property.
-| For example, to add a new item, do as follows: `getTag().add(newItem);`
-| Objects of the following type(s) are allowed in the list `TagInfo`
-|          returns :ref:`List<java.util.List>`
+| **getTag** () → :ref:`TagInfo><java.util.List<com.manticore.tools.xmldoclet.xjc.TagInfo>>`
+| Gets the value of the tag property. 
+| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the tag property. 
+| For example, to add a new item, do as follows: `getTag().add(newItem);` 
+| Objects of the following type(s) are allowed in the list ,`TagInfo`,
+|          returns :ref:`TagInfo><java.util.List<com.manticore.tools.xmldoclet.xjc.TagInfo>>`
 
 
 
-| **getParameter** () → :ref:`List<java.util.List>`
-| Gets the value of the parameter property.
-| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the parameter property.
-| For example, to add a new item, do as follows: `getParameter().add(newItem);`
-| Objects of the following type(s) are allowed in the list `MethodParameter`
-|          returns :ref:`List<java.util.List>`
+| **getParameter** () → :ref:`MethodParameter><java.util.List<com.manticore.tools.xmldoclet.xjc.MethodParameter>>`
+| Gets the value of the parameter property. 
+| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the parameter property. 
+| For example, to add a new item, do as follows: `getParameter().add(newItem);` 
+| Objects of the following type(s) are allowed in the list ,`MethodParameter`,
+|          returns :ref:`MethodParameter><java.util.List<com.manticore.tools.xmldoclet.xjc.MethodParameter>>`
 
 
 
-| **getException** () → :ref:`List<java.util.List>`
-| Gets the value of the exception property.
-| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the exception property.
-| For example, to add a new item, do as follows: `getException().add(newItem);`
-| Objects of the following type(s) are allowed in the list `TypeInfo`
-|          returns :ref:`List<java.util.List>`
+| **getException** () → :ref:`TypeInfo><java.util.List<com.manticore.tools.xmldoclet.xjc.TypeInfo>>`
+| Gets the value of the exception property. 
+| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the exception property. 
+| For example, to add a new item, do as follows: `getException().add(newItem);` 
+| Objects of the following type(s) are allowed in the list ,`TypeInfo`,
+|          returns :ref:`TypeInfo><java.util.List<com.manticore.tools.xmldoclet.xjc.TypeInfo>>`
 
 
 
-| **getAnnotation** () → :ref:`List<java.util.List>`
-| Gets the value of the annotation property.
-| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the annotation property.
-| For example, to add a new item, do as follows: `getAnnotation().add(newItem);`
-| Objects of the following type(s) are allowed in the list `AnnotationInstance`
-|          returns :ref:`List<java.util.List>`
+| **getAnnotation** () → :ref:`AnnotationInstance><java.util.List<com.manticore.tools.xmldoclet.xjc.AnnotationInstance>>`
+| Gets the value of the annotation property. 
+| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the annotation property. 
+| For example, to add a new item, do as follows: `getAnnotation().add(newItem);` 
+| Objects of the following type(s) are allowed in the list ,`AnnotationInstance`,
+|          returns :ref:`AnnotationInstance><java.util.List<com.manticore.tools.xmldoclet.xjc.AnnotationInstance>>`
 
 
 
 | **getName** () → :ref:`String<java.lang.String>`
 | Gets the value of the name property.
-|          returns :ref:`String<java.lang.String>`  | possible object is `String`
+|          returns :ref:`String<java.lang.String>`
 
 
 
@@ -798,7 +1068,7 @@ Constructor
 
 | **getSignature** () → :ref:`String<java.lang.String>`
 | Gets the value of the signature property.
-|          returns :ref:`String<java.lang.String>`  | possible object is `String`
+|          returns :ref:`String<java.lang.String>`
 
 
 
@@ -809,7 +1079,7 @@ Constructor
 
 | **getQualified** () → :ref:`String<java.lang.String>`
 | Gets the value of the qualified property.
-|          returns :ref:`String<java.lang.String>`  | possible object is `String`
+|          returns :ref:`String<java.lang.String>`
 
 
 
@@ -820,7 +1090,7 @@ Constructor
 
 | **getScope** () → :ref:`String<java.lang.String>`
 | Gets the value of the scope property.
-|          returns :ref:`String<java.lang.String>`  | possible object is `String`
+|          returns :ref:`String<java.lang.String>`
 
 
 
@@ -831,7 +1101,7 @@ Constructor
 
 | **isFinal** () → boolean
 | Gets the value of the final property.
-|          returns boolean  | possible object is `Boolean`
+|          returns boolean
 
 
 
@@ -842,7 +1112,7 @@ Constructor
 
 | **isIncluded** () → boolean
 | Gets the value of the included property.
-|          returns boolean  | possible object is `Boolean`
+|          returns boolean
 
 
 
@@ -853,7 +1123,7 @@ Constructor
 
 | **isNative** () → boolean
 | Gets the value of the native property.
-|          returns boolean  | possible object is `Boolean`
+|          returns boolean
 
 
 
@@ -864,7 +1134,7 @@ Constructor
 
 | **isSynchronized** () → boolean
 | Gets the value of the synchronized property.
-|          returns boolean  | possible object is `Boolean`
+|          returns boolean
 
 
 
@@ -875,7 +1145,7 @@ Constructor
 
 | **isStatic** () → boolean
 | Gets the value of the static property.
-|          returns boolean  | possible object is `Boolean`
+|          returns boolean
 
 
 
@@ -886,7 +1156,7 @@ Constructor
 
 | **isVarArgs** () → boolean
 | Gets the value of the varArgs property.
-|          returns boolean  | possible object is `Boolean`
+|          returns boolean
 
 
 
@@ -896,24 +1166,24 @@ Constructor
 
 
 
-..  _com.manticore.tools.xmldoclet.xmldoclet.xjc.Enum:
+..  _com.manticore.tools.xmldoclet.xjc.Enum:
 
 =======================================================================
 Enum
 =======================================================================
 
-*extends:* :ref:`Object<java.lang.Object>`
+*extends:* :ref:`Object<java.lang.Object>` 
 
-|
-| Java class for enum complex type.
-| The following schema fragment specifies the expected content contained within this class. `&lt;complexType name="enum"&gt; &lt;complexContent&gt; &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt; &lt;sequence&gt; &lt;element name="comment" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt; &lt;element name="tag" type="{}tagInfo" maxOccurs="unbounded" minOccurs="0"/&gt; &lt;element name="class" type="{}typeInfo" minOccurs="0"/&gt; &lt;element name="interface" type="{}typeInfo" maxOccurs="unbounded" minOccurs="0"/&gt; &lt;element name="constant" type="{}enumConstant" maxOccurs="unbounded" minOccurs="0"/&gt; &lt;element name="annotation" type="{}annotationInstance" maxOccurs="unbounded" minOccurs="0"/&gt; &lt;/sequence&gt; &lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" /&gt; &lt;attribute name="qualified" type="{http://www.w3.org/2001/XMLSchema}string" /&gt; &lt;attribute name="scope" type="{}scope" /&gt; &lt;attribute name="included" type="{http://www.w3.org/2001/XMLSchema}boolean" default="true" /&gt; &lt;/restriction&gt; &lt;/complexContent&gt; &lt;/complexType&gt;`
+| 
+| Java class for enum complex type. 
+| The following schema fragment specifies the expected content contained within this class. `{@code ``complexType name="enum"`` ``complexContent`` ``restriction base="{http://www.w3.org/2001/XMLSchema}anyType"`` ``sequence`` ``element name="comment" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"`` ``element name="tag" type="{}tagInfo" maxOccurs="unbounded" minOccurs="0"`` ``element name="class" type="{}typeInfo" minOccurs="0"`` ``element name="interface" type="{}typeInfo" maxOccurs="unbounded" minOccurs="0"`` ``element name="constant" type="{}enumConstant" maxOccurs="unbounded" minOccurs="0"`` ``element name="annotation" type="{}annotationInstance" maxOccurs="unbounded" minOccurs="0"`` ``/sequence`` ``attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string"`` ``attribute name="qualified" type="{http://www.w3.org/2001/XMLSchema}string"`` ``attribute name="scope" type="{}scope"`` ``attribute name="included" type="{http://www.w3.org/2001/XMLSchema}boolean" default="true"`` ``/restriction`` ``/complexContent`` ``/complexType`` }`
 
 | **Enum** ()
 
 
 | **getComment** () → :ref:`String<java.lang.String>`
 | Gets the value of the comment property.
-|          returns :ref:`String<java.lang.String>`  | possible object is `String`
+|          returns :ref:`String<java.lang.String>`
 
 
 
@@ -922,56 +1192,56 @@ Enum
 |          :ref:`String<java.lang.String>` value
 
 
-| **getTag** () → :ref:`List<java.util.List>`
-| Gets the value of the tag property.
-| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the tag property.
-| For example, to add a new item, do as follows: `getTag().add(newItem);`
-| Objects of the following type(s) are allowed in the list `TagInfo`
-|          returns :ref:`List<java.util.List>`
+| **getTag** () → :ref:`TagInfo><java.util.List<com.manticore.tools.xmldoclet.xjc.TagInfo>>`
+| Gets the value of the tag property. 
+| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the tag property. 
+| For example, to add a new item, do as follows: `getTag().add(newItem);` 
+| Objects of the following type(s) are allowed in the list ,`TagInfo`,
+|          returns :ref:`TagInfo><java.util.List<com.manticore.tools.xmldoclet.xjc.TagInfo>>`
 
 
 
-| **getClazz** () → :ref:`TypeInfo<com.manticore.tools.xmldoclet.xmldoclet.xjc.TypeInfo>`
+| **getClazz** () → :ref:`TypeInfo<com.manticore.tools.xmldoclet.xjc.TypeInfo>`
 | Gets the value of the clazz property.
-|          returns :ref:`TypeInfo<com.manticore.tools.xmldoclet.xmldoclet.xjc.TypeInfo>`  | possible object is `TypeInfo`
+|          returns :ref:`TypeInfo<com.manticore.tools.xmldoclet.xjc.TypeInfo>`
 
 
 
 | **setClazz** (value)
 | Sets the value of the clazz property.
-|          :ref:`TypeInfo<com.manticore.tools.xmldoclet.xmldoclet.xjc.TypeInfo>` value
+|          :ref:`TypeInfo<com.manticore.tools.xmldoclet.xjc.TypeInfo>` value
 
 
-| **getInterface** () → :ref:`List<java.util.List>`
-| Gets the value of the interface property.
-| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the interface property.
-| For example, to add a new item, do as follows: `getInterface().add(newItem);`
-| Objects of the following type(s) are allowed in the list `TypeInfo`
-|          returns :ref:`List<java.util.List>`
-
-
-
-| **getConstant** () → :ref:`List<java.util.List>`
-| Gets the value of the constant property.
-| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the constant property.
-| For example, to add a new item, do as follows: `getConstant().add(newItem);`
-| Objects of the following type(s) are allowed in the list `EnumConstant`
-|          returns :ref:`List<java.util.List>`
+| **getInterface** () → :ref:`TypeInfo><java.util.List<com.manticore.tools.xmldoclet.xjc.TypeInfo>>`
+| Gets the value of the interface property. 
+| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the interface property. 
+| For example, to add a new item, do as follows: `getInterface().add(newItem);` 
+| Objects of the following type(s) are allowed in the list ,`TypeInfo`,
+|          returns :ref:`TypeInfo><java.util.List<com.manticore.tools.xmldoclet.xjc.TypeInfo>>`
 
 
 
-| **getAnnotation** () → :ref:`List<java.util.List>`
-| Gets the value of the annotation property.
-| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the annotation property.
-| For example, to add a new item, do as follows: `getAnnotation().add(newItem);`
-| Objects of the following type(s) are allowed in the list `AnnotationInstance`
-|          returns :ref:`List<java.util.List>`
+| **getConstant** () → :ref:`EnumConstant><java.util.List<com.manticore.tools.xmldoclet.xjc.EnumConstant>>`
+| Gets the value of the constant property. 
+| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the constant property. 
+| For example, to add a new item, do as follows: `getConstant().add(newItem);` 
+| Objects of the following type(s) are allowed in the list ,`EnumConstant`,
+|          returns :ref:`EnumConstant><java.util.List<com.manticore.tools.xmldoclet.xjc.EnumConstant>>`
+
+
+
+| **getAnnotation** () → :ref:`AnnotationInstance><java.util.List<com.manticore.tools.xmldoclet.xjc.AnnotationInstance>>`
+| Gets the value of the annotation property. 
+| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the annotation property. 
+| For example, to add a new item, do as follows: `getAnnotation().add(newItem);` 
+| Objects of the following type(s) are allowed in the list ,`AnnotationInstance`,
+|          returns :ref:`AnnotationInstance><java.util.List<com.manticore.tools.xmldoclet.xjc.AnnotationInstance>>`
 
 
 
 | **getName** () → :ref:`String<java.lang.String>`
 | Gets the value of the name property.
-|          returns :ref:`String<java.lang.String>`  | possible object is `String`
+|          returns :ref:`String<java.lang.String>`
 
 
 
@@ -982,7 +1252,7 @@ Enum
 
 | **getQualified** () → :ref:`String<java.lang.String>`
 | Gets the value of the qualified property.
-|          returns :ref:`String<java.lang.String>`  | possible object is `String`
+|          returns :ref:`String<java.lang.String>`
 
 
 
@@ -993,7 +1263,7 @@ Enum
 
 | **getScope** () → :ref:`String<java.lang.String>`
 | Gets the value of the scope property.
-|          returns :ref:`String<java.lang.String>`  | possible object is `String`
+|          returns :ref:`String<java.lang.String>`
 
 
 
@@ -1004,7 +1274,7 @@ Enum
 
 | **isIncluded** () → boolean
 | Gets the value of the included property.
-|          returns boolean  | possible object is `Boolean`
+|          returns boolean
 
 
 
@@ -1014,24 +1284,24 @@ Enum
 
 
 
-..  _com.manticore.tools.xmldoclet.xmldoclet.xjc.EnumConstant:
+..  _com.manticore.tools.xmldoclet.xjc.EnumConstant:
 
 =======================================================================
 EnumConstant
 =======================================================================
 
-*extends:* :ref:`Object<java.lang.Object>`
+*extends:* :ref:`Object<java.lang.Object>` 
 
-|
-| Java class for enumConstant complex type.
-| The following schema fragment specifies the expected content contained within this class. `&lt;complexType name="enumConstant"&gt; &lt;complexContent&gt; &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt; &lt;sequence&gt; &lt;element name="comment" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt; &lt;element name="tag" type="{}tagInfo" maxOccurs="unbounded" minOccurs="0"/&gt; &lt;element name="annotation" type="{}annotationInstance" maxOccurs="unbounded" minOccurs="0"/&gt; &lt;/sequence&gt; &lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" /&gt; &lt;/restriction&gt; &lt;/complexContent&gt; &lt;/complexType&gt;`
+| 
+| Java class for enumConstant complex type. 
+| The following schema fragment specifies the expected content contained within this class. `{@code ``complexType name="enumConstant"`` ``complexContent`` ``restriction base="{http://www.w3.org/2001/XMLSchema}anyType"`` ``sequence`` ``element name="comment" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"`` ``element name="tag" type="{}tagInfo" maxOccurs="unbounded" minOccurs="0"`` ``element name="annotation" type="{}annotationInstance" maxOccurs="unbounded" minOccurs="0"`` ``/sequence`` ``attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string"`` ``/restriction`` ``/complexContent`` ``/complexType`` }`
 
 | **EnumConstant** ()
 
 
 | **getComment** () → :ref:`String<java.lang.String>`
 | Gets the value of the comment property.
-|          returns :ref:`String<java.lang.String>`  | possible object is `String`
+|          returns :ref:`String<java.lang.String>`
 
 
 
@@ -1040,27 +1310,27 @@ EnumConstant
 |          :ref:`String<java.lang.String>` value
 
 
-| **getTag** () → :ref:`List<java.util.List>`
-| Gets the value of the tag property.
-| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the tag property.
-| For example, to add a new item, do as follows: `getTag().add(newItem);`
-| Objects of the following type(s) are allowed in the list `TagInfo`
-|          returns :ref:`List<java.util.List>`
+| **getTag** () → :ref:`TagInfo><java.util.List<com.manticore.tools.xmldoclet.xjc.TagInfo>>`
+| Gets the value of the tag property. 
+| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the tag property. 
+| For example, to add a new item, do as follows: `getTag().add(newItem);` 
+| Objects of the following type(s) are allowed in the list ,`TagInfo`,
+|          returns :ref:`TagInfo><java.util.List<com.manticore.tools.xmldoclet.xjc.TagInfo>>`
 
 
 
-| **getAnnotation** () → :ref:`List<java.util.List>`
-| Gets the value of the annotation property.
-| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the annotation property.
-| For example, to add a new item, do as follows: `getAnnotation().add(newItem);`
-| Objects of the following type(s) are allowed in the list `AnnotationInstance`
-|          returns :ref:`List<java.util.List>`
+| **getAnnotation** () → :ref:`AnnotationInstance><java.util.List<com.manticore.tools.xmldoclet.xjc.AnnotationInstance>>`
+| Gets the value of the annotation property. 
+| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the annotation property. 
+| For example, to add a new item, do as follows: `getAnnotation().add(newItem);` 
+| Objects of the following type(s) are allowed in the list ,`AnnotationInstance`,
+|          returns :ref:`AnnotationInstance><java.util.List<com.manticore.tools.xmldoclet.xjc.AnnotationInstance>>`
 
 
 
 | **getName** () → :ref:`String<java.lang.String>`
 | Gets the value of the name property.
-|          returns :ref:`String<java.lang.String>`  | possible object is `String`
+|          returns :ref:`String<java.lang.String>`
 
 
 
@@ -1070,35 +1340,35 @@ EnumConstant
 
 
 
-..  _com.manticore.tools.xmldoclet.xmldoclet.xjc.Field:
+..  _com.manticore.tools.xmldoclet.xjc.Field:
 
 =======================================================================
 Field
 =======================================================================
 
-*extends:* :ref:`Object<java.lang.Object>`
+*extends:* :ref:`Object<java.lang.Object>` 
 
-|
-| Java class for field complex type.
-| The following schema fragment specifies the expected content contained within this class. `&lt;complexType name="field"&gt; &lt;complexContent&gt; &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt; &lt;sequence&gt; &lt;element name="type" type="{}typeInfo" minOccurs="0"/&gt; &lt;element name="comment" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt; &lt;element name="tag" type="{}tagInfo" maxOccurs="unbounded" minOccurs="0"/&gt; &lt;element name="constant" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt; &lt;element name="annotation" type="{}annotationInstance" maxOccurs="unbounded" minOccurs="0"/&gt; &lt;/sequence&gt; &lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" /&gt; &lt;attribute name="qualified" type="{http://www.w3.org/2001/XMLSchema}string" /&gt; &lt;attribute name="scope" type="{}scope" /&gt; &lt;attribute name="volatile" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" /&gt; &lt;attribute name="transient" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" /&gt; &lt;attribute name="static" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" /&gt; &lt;attribute name="final" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" /&gt; &lt;/restriction&gt; &lt;/complexContent&gt; &lt;/complexType&gt;`
+| 
+| Java class for field complex type. 
+| The following schema fragment specifies the expected content contained within this class. `{@code ``complexType name="field"`` ``complexContent`` ``restriction base="{http://www.w3.org/2001/XMLSchema}anyType"`` ``sequence`` ``element name="type" type="{}typeInfo" minOccurs="0"`` ``element name="comment" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"`` ``element name="tag" type="{}tagInfo" maxOccurs="unbounded" minOccurs="0"`` ``element name="constant" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"`` ``element name="annotation" type="{}annotationInstance" maxOccurs="unbounded" minOccurs="0"`` ``/sequence`` ``attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string"`` ``attribute name="qualified" type="{http://www.w3.org/2001/XMLSchema}string"`` ``attribute name="scope" type="{}scope"`` ``attribute name="volatile" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false"`` ``attribute name="transient" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false"`` ``attribute name="static" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false"`` ``attribute name="final" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false"`` ``/restriction`` ``/complexContent`` ``/complexType`` }`
 
 | **Field** ()
 
 
-| **getType** () → :ref:`TypeInfo<com.manticore.tools.xmldoclet.xmldoclet.xjc.TypeInfo>`
+| **getType** () → :ref:`TypeInfo<com.manticore.tools.xmldoclet.xjc.TypeInfo>`
 | Gets the value of the type property.
-|          returns :ref:`TypeInfo<com.manticore.tools.xmldoclet.xmldoclet.xjc.TypeInfo>`  | possible object is `TypeInfo`
+|          returns :ref:`TypeInfo<com.manticore.tools.xmldoclet.xjc.TypeInfo>`
 
 
 
 | **setType** (value)
 | Sets the value of the type property.
-|          :ref:`TypeInfo<com.manticore.tools.xmldoclet.xmldoclet.xjc.TypeInfo>` value
+|          :ref:`TypeInfo<com.manticore.tools.xmldoclet.xjc.TypeInfo>` value
 
 
 | **getComment** () → :ref:`String<java.lang.String>`
 | Gets the value of the comment property.
-|          returns :ref:`String<java.lang.String>`  | possible object is `String`
+|          returns :ref:`String<java.lang.String>`
 
 
 
@@ -1107,18 +1377,18 @@ Field
 |          :ref:`String<java.lang.String>` value
 
 
-| **getTag** () → :ref:`List<java.util.List>`
-| Gets the value of the tag property.
-| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the tag property.
-| For example, to add a new item, do as follows: `getTag().add(newItem);`
-| Objects of the following type(s) are allowed in the list `TagInfo`
-|          returns :ref:`List<java.util.List>`
+| **getTag** () → :ref:`TagInfo><java.util.List<com.manticore.tools.xmldoclet.xjc.TagInfo>>`
+| Gets the value of the tag property. 
+| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the tag property. 
+| For example, to add a new item, do as follows: `getTag().add(newItem);` 
+| Objects of the following type(s) are allowed in the list ,`TagInfo`,
+|          returns :ref:`TagInfo><java.util.List<com.manticore.tools.xmldoclet.xjc.TagInfo>>`
 
 
 
 | **getConstant** () → :ref:`String<java.lang.String>`
 | Gets the value of the constant property.
-|          returns :ref:`String<java.lang.String>`  | possible object is `String`
+|          returns :ref:`String<java.lang.String>`
 
 
 
@@ -1127,18 +1397,18 @@ Field
 |          :ref:`String<java.lang.String>` value
 
 
-| **getAnnotation** () → :ref:`List<java.util.List>`
-| Gets the value of the annotation property.
-| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the annotation property.
-| For example, to add a new item, do as follows: `getAnnotation().add(newItem);`
-| Objects of the following type(s) are allowed in the list `AnnotationInstance`
-|          returns :ref:`List<java.util.List>`
+| **getAnnotation** () → :ref:`AnnotationInstance><java.util.List<com.manticore.tools.xmldoclet.xjc.AnnotationInstance>>`
+| Gets the value of the annotation property. 
+| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the annotation property. 
+| For example, to add a new item, do as follows: `getAnnotation().add(newItem);` 
+| Objects of the following type(s) are allowed in the list ,`AnnotationInstance`,
+|          returns :ref:`AnnotationInstance><java.util.List<com.manticore.tools.xmldoclet.xjc.AnnotationInstance>>`
 
 
 
 | **getName** () → :ref:`String<java.lang.String>`
 | Gets the value of the name property.
-|          returns :ref:`String<java.lang.String>`  | possible object is `String`
+|          returns :ref:`String<java.lang.String>`
 
 
 
@@ -1149,7 +1419,7 @@ Field
 
 | **getQualified** () → :ref:`String<java.lang.String>`
 | Gets the value of the qualified property.
-|          returns :ref:`String<java.lang.String>`  | possible object is `String`
+|          returns :ref:`String<java.lang.String>`
 
 
 
@@ -1160,7 +1430,7 @@ Field
 
 | **getScope** () → :ref:`String<java.lang.String>`
 | Gets the value of the scope property.
-|          returns :ref:`String<java.lang.String>`  | possible object is `String`
+|          returns :ref:`String<java.lang.String>`
 
 
 
@@ -1171,7 +1441,7 @@ Field
 
 | **isVolatile** () → boolean
 | Gets the value of the volatile property.
-|          returns boolean  | possible object is `Boolean`
+|          returns boolean
 
 
 
@@ -1182,7 +1452,7 @@ Field
 
 | **isTransient** () → boolean
 | Gets the value of the transient property.
-|          returns boolean  | possible object is `Boolean`
+|          returns boolean
 
 
 
@@ -1193,7 +1463,7 @@ Field
 
 | **isStatic** () → boolean
 | Gets the value of the static property.
-|          returns boolean  | possible object is `Boolean`
+|          returns boolean
 
 
 
@@ -1204,7 +1474,7 @@ Field
 
 | **isFinal** () → boolean
 | Gets the value of the final property.
-|          returns boolean  | possible object is `Boolean`
+|          returns boolean
 
 
 
@@ -1214,24 +1484,24 @@ Field
 
 
 
-..  _com.manticore.tools.xmldoclet.xmldoclet.xjc.Interface:
+..  _com.manticore.tools.xmldoclet.xjc.Interface:
 
 =======================================================================
 Interface
 =======================================================================
 
-*extends:* :ref:`Object<java.lang.Object>`
+*extends:* :ref:`Object<java.lang.Object>` 
 
-|
-| Java class for interface complex type.
-| The following schema fragment specifies the expected content contained within this class. `&lt;complexType name="interface"&gt; &lt;complexContent&gt; &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt; &lt;sequence&gt; &lt;element name="comment" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt; &lt;element name="tag" type="{}tagInfo" maxOccurs="unbounded" minOccurs="0"/&gt; &lt;element name="generic" type="{}typeParameter" maxOccurs="unbounded" minOccurs="0"/&gt; &lt;element name="interface" type="{}typeInfo" maxOccurs="unbounded" minOccurs="0"/&gt; &lt;element name="method" type="{}method" maxOccurs="unbounded" minOccurs="0"/&gt; &lt;element name="annotation" type="{}annotationInstance" maxOccurs="unbounded" minOccurs="0"/&gt; &lt;element name="field" type="{}field" maxOccurs="unbounded" minOccurs="0"/&gt; &lt;/sequence&gt; &lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" /&gt; &lt;attribute name="qualified" type="{http://www.w3.org/2001/XMLSchema}string" /&gt; &lt;attribute name="scope" type="{}scope" /&gt; &lt;attribute name="included" type="{http://www.w3.org/2001/XMLSchema}boolean" default="true" /&gt; &lt;/restriction&gt; &lt;/complexContent&gt; &lt;/complexType&gt;`
+| 
+| Java class for interface complex type. 
+| The following schema fragment specifies the expected content contained within this class. `{@code ``complexType name="interface"`` ``complexContent`` ``restriction base="{http://www.w3.org/2001/XMLSchema}anyType"`` ``sequence`` ``element name="comment" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"`` ``element name="tag" type="{}tagInfo" maxOccurs="unbounded" minOccurs="0"`` ``element name="generic" type="{}typeParameter" maxOccurs="unbounded" minOccurs="0"`` ``element name="interface" type="{}typeInfo" maxOccurs="unbounded" minOccurs="0"`` ``element name="method" type="{}method" maxOccurs="unbounded" minOccurs="0"`` ``element name="annotation" type="{}annotationInstance" maxOccurs="unbounded" minOccurs="0"`` ``element name="field" type="{}field" maxOccurs="unbounded" minOccurs="0"`` ``/sequence`` ``attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string"`` ``attribute name="qualified" type="{http://www.w3.org/2001/XMLSchema}string"`` ``attribute name="scope" type="{}scope"`` ``attribute name="included" type="{http://www.w3.org/2001/XMLSchema}boolean" default="true"`` ``/restriction`` ``/complexContent`` ``/complexType`` }`
 
 | **Interface** ()
 
 
 | **getComment** () → :ref:`String<java.lang.String>`
 | Gets the value of the comment property.
-|          returns :ref:`String<java.lang.String>`  | possible object is `String`
+|          returns :ref:`String<java.lang.String>`
 
 
 
@@ -1240,63 +1510,63 @@ Interface
 |          :ref:`String<java.lang.String>` value
 
 
-| **getTag** () → :ref:`List<java.util.List>`
-| Gets the value of the tag property.
-| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the tag property.
-| For example, to add a new item, do as follows: `getTag().add(newItem);`
-| Objects of the following type(s) are allowed in the list `TagInfo`
-|          returns :ref:`List<java.util.List>`
+| **getTag** () → :ref:`TagInfo><java.util.List<com.manticore.tools.xmldoclet.xjc.TagInfo>>`
+| Gets the value of the tag property. 
+| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the tag property. 
+| For example, to add a new item, do as follows: `getTag().add(newItem);` 
+| Objects of the following type(s) are allowed in the list ,`TagInfo`,
+|          returns :ref:`TagInfo><java.util.List<com.manticore.tools.xmldoclet.xjc.TagInfo>>`
 
 
 
-| **getGeneric** () → :ref:`List<java.util.List>`
-| Gets the value of the generic property.
-| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the generic property.
-| For example, to add a new item, do as follows: `getGeneric().add(newItem);`
-| Objects of the following type(s) are allowed in the list `TypeParameter`
-|          returns :ref:`List<java.util.List>`
+| **getGeneric** () → :ref:`TypeParameter><java.util.List<com.manticore.tools.xmldoclet.xjc.TypeParameter>>`
+| Gets the value of the generic property. 
+| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the generic property. 
+| For example, to add a new item, do as follows: `getGeneric().add(newItem);` 
+| Objects of the following type(s) are allowed in the list ,`TypeParameter`,
+|          returns :ref:`TypeParameter><java.util.List<com.manticore.tools.xmldoclet.xjc.TypeParameter>>`
 
 
 
-| **getInterface** () → :ref:`List<java.util.List>`
-| Gets the value of the interface property.
-| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the interface property.
-| For example, to add a new item, do as follows: `getInterface().add(newItem);`
-| Objects of the following type(s) are allowed in the list `TypeInfo`
-|          returns :ref:`List<java.util.List>`
+| **getInterface** () → :ref:`TypeInfo><java.util.List<com.manticore.tools.xmldoclet.xjc.TypeInfo>>`
+| Gets the value of the interface property. 
+| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the interface property. 
+| For example, to add a new item, do as follows: `getInterface().add(newItem);` 
+| Objects of the following type(s) are allowed in the list ,`TypeInfo`,
+|          returns :ref:`TypeInfo><java.util.List<com.manticore.tools.xmldoclet.xjc.TypeInfo>>`
 
 
 
-| **getMethod** () → :ref:`List<java.util.List>`
-| Gets the value of the method property.
-| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the method property.
-| For example, to add a new item, do as follows: `getMethod().add(newItem);`
-| Objects of the following type(s) are allowed in the list `Method`
-|          returns :ref:`List<java.util.List>`
+| **getMethod** () → :ref:`Method><java.util.List<com.manticore.tools.xmldoclet.xjc.Method>>`
+| Gets the value of the method property. 
+| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the method property. 
+| For example, to add a new item, do as follows: `getMethod().add(newItem);` 
+| Objects of the following type(s) are allowed in the list ,`Method`,
+|          returns :ref:`Method><java.util.List<com.manticore.tools.xmldoclet.xjc.Method>>`
 
 
 
-| **getAnnotation** () → :ref:`List<java.util.List>`
-| Gets the value of the annotation property.
-| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the annotation property.
-| For example, to add a new item, do as follows: `getAnnotation().add(newItem);`
-| Objects of the following type(s) are allowed in the list `AnnotationInstance`
-|          returns :ref:`List<java.util.List>`
+| **getAnnotation** () → :ref:`AnnotationInstance><java.util.List<com.manticore.tools.xmldoclet.xjc.AnnotationInstance>>`
+| Gets the value of the annotation property. 
+| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the annotation property. 
+| For example, to add a new item, do as follows: `getAnnotation().add(newItem);` 
+| Objects of the following type(s) are allowed in the list ,`AnnotationInstance`,
+|          returns :ref:`AnnotationInstance><java.util.List<com.manticore.tools.xmldoclet.xjc.AnnotationInstance>>`
 
 
 
-| **getField** () → :ref:`List<java.util.List>`
-| Gets the value of the field property.
-| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the field property.
-| For example, to add a new item, do as follows: `getField().add(newItem);`
-| Objects of the following type(s) are allowed in the list `Field`
-|          returns :ref:`List<java.util.List>`
+| **getField** () → :ref:`Field><java.util.List<com.manticore.tools.xmldoclet.xjc.Field>>`
+| Gets the value of the field property. 
+| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the field property. 
+| For example, to add a new item, do as follows: `getField().add(newItem);` 
+| Objects of the following type(s) are allowed in the list ,`Field`,
+|          returns :ref:`Field><java.util.List<com.manticore.tools.xmldoclet.xjc.Field>>`
 
 
 
 | **getName** () → :ref:`String<java.lang.String>`
 | Gets the value of the name property.
-|          returns :ref:`String<java.lang.String>`  | possible object is `String`
+|          returns :ref:`String<java.lang.String>`
 
 
 
@@ -1307,7 +1577,7 @@ Interface
 
 | **getQualified** () → :ref:`String<java.lang.String>`
 | Gets the value of the qualified property.
-|          returns :ref:`String<java.lang.String>`  | possible object is `String`
+|          returns :ref:`String<java.lang.String>`
 
 
 
@@ -1318,7 +1588,7 @@ Interface
 
 | **getScope** () → :ref:`String<java.lang.String>`
 | Gets the value of the scope property.
-|          returns :ref:`String<java.lang.String>`  | possible object is `String`
+|          returns :ref:`String<java.lang.String>`
 
 
 
@@ -1329,7 +1599,7 @@ Interface
 
 | **isIncluded** () → boolean
 | Gets the value of the included property.
-|          returns boolean  | possible object is `Boolean`
+|          returns boolean
 
 
 
@@ -1339,24 +1609,24 @@ Interface
 
 
 
-..  _com.manticore.tools.xmldoclet.xmldoclet.xjc.Method:
+..  _com.manticore.tools.xmldoclet.xjc.Method:
 
 =======================================================================
 Method
 =======================================================================
 
-*extends:* :ref:`Object<java.lang.Object>`
+*extends:* :ref:`Object<java.lang.Object>` 
 
-|
-| Java class for method complex type.
-| The following schema fragment specifies the expected content contained within this class. `&lt;complexType name="method"&gt; &lt;complexContent&gt; &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt; &lt;sequence&gt; &lt;element name="comment" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt; &lt;element name="tag" type="{}tagInfo" maxOccurs="unbounded" minOccurs="0"/&gt; &lt;element name="parameter" type="{}methodParameter" maxOccurs="unbounded" minOccurs="0"/&gt; &lt;element name="return" type="{}typeInfo" minOccurs="0"/&gt; &lt;element name="exception" type="{}typeInfo" maxOccurs="unbounded" minOccurs="0"/&gt; &lt;element name="annotation" type="{}annotationInstance" maxOccurs="unbounded" minOccurs="0"/&gt; &lt;/sequence&gt; &lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" /&gt; &lt;attribute name="signature" type="{http://www.w3.org/2001/XMLSchema}string" /&gt; &lt;attribute name="qualified" type="{http://www.w3.org/2001/XMLSchema}string" /&gt; &lt;attribute name="scope" type="{}scope" /&gt; &lt;attribute name="abstract" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" /&gt; &lt;attribute name="final" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" /&gt; &lt;attribute name="included" type="{http://www.w3.org/2001/XMLSchema}boolean" default="true" /&gt; &lt;attribute name="native" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" /&gt; &lt;attribute name="synchronized" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" /&gt; &lt;attribute name="static" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" /&gt; &lt;attribute name="varArgs" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" /&gt; &lt;/restriction&gt; &lt;/complexContent&gt; &lt;/complexType&gt;`
+| 
+| Java class for method complex type. 
+| The following schema fragment specifies the expected content contained within this class. `{@code ``complexType name="method"`` ``complexContent`` ``restriction base="{http://www.w3.org/2001/XMLSchema}anyType"`` ``sequence`` ``element name="comment" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"`` ``element name="tag" type="{}tagInfo" maxOccurs="unbounded" minOccurs="0"`` ``element name="parameter" type="{}methodParameter" maxOccurs="unbounded" minOccurs="0"`` ``element name="return" type="{}typeInfo" minOccurs="0"`` ``element name="exception" type="{}typeInfo" maxOccurs="unbounded" minOccurs="0"`` ``element name="annotation" type="{}annotationInstance" maxOccurs="unbounded" minOccurs="0"`` ``/sequence`` ``attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string"`` ``attribute name="signature" type="{http://www.w3.org/2001/XMLSchema}string"`` ``attribute name="qualified" type="{http://www.w3.org/2001/XMLSchema}string"`` ``attribute name="scope" type="{}scope"`` ``attribute name="abstract" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false"`` ``attribute name="final" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false"`` ``attribute name="included" type="{http://www.w3.org/2001/XMLSchema}boolean" default="true"`` ``attribute name="native" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false"`` ``attribute name="synchronized" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false"`` ``attribute name="static" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false"`` ``attribute name="varArgs" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false"`` ``/restriction`` ``/complexContent`` ``/complexType`` }`
 
 | **Method** ()
 
 
 | **getComment** () → :ref:`String<java.lang.String>`
 | Gets the value of the comment property.
-|          returns :ref:`String<java.lang.String>`  | possible object is `String`
+|          returns :ref:`String<java.lang.String>`
 
 
 
@@ -1365,56 +1635,56 @@ Method
 |          :ref:`String<java.lang.String>` value
 
 
-| **getTag** () → :ref:`List<java.util.List>`
-| Gets the value of the tag property.
-| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the tag property.
-| For example, to add a new item, do as follows: `getTag().add(newItem);`
-| Objects of the following type(s) are allowed in the list `TagInfo`
-|          returns :ref:`List<java.util.List>`
+| **getTag** () → :ref:`TagInfo><java.util.List<com.manticore.tools.xmldoclet.xjc.TagInfo>>`
+| Gets the value of the tag property. 
+| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the tag property. 
+| For example, to add a new item, do as follows: `getTag().add(newItem);` 
+| Objects of the following type(s) are allowed in the list ,`TagInfo`,
+|          returns :ref:`TagInfo><java.util.List<com.manticore.tools.xmldoclet.xjc.TagInfo>>`
 
 
 
-| **getParameter** () → :ref:`List<java.util.List>`
-| Gets the value of the parameter property.
-| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the parameter property.
-| For example, to add a new item, do as follows: `getParameter().add(newItem);`
-| Objects of the following type(s) are allowed in the list `MethodParameter`
-|          returns :ref:`List<java.util.List>`
+| **getParameter** () → :ref:`MethodParameter><java.util.List<com.manticore.tools.xmldoclet.xjc.MethodParameter>>`
+| Gets the value of the parameter property. 
+| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the parameter property. 
+| For example, to add a new item, do as follows: `getParameter().add(newItem);` 
+| Objects of the following type(s) are allowed in the list ,`MethodParameter`,
+|          returns :ref:`MethodParameter><java.util.List<com.manticore.tools.xmldoclet.xjc.MethodParameter>>`
 
 
 
-| **getReturn** () → :ref:`TypeInfo<com.manticore.tools.xmldoclet.xmldoclet.xjc.TypeInfo>`
+| **getReturn** () → :ref:`TypeInfo<com.manticore.tools.xmldoclet.xjc.TypeInfo>`
 | Gets the value of the return property.
-|          returns :ref:`TypeInfo<com.manticore.tools.xmldoclet.xmldoclet.xjc.TypeInfo>`  | possible object is `TypeInfo`
+|          returns :ref:`TypeInfo<com.manticore.tools.xmldoclet.xjc.TypeInfo>`
 
 
 
 | **setReturn** (value)
 | Sets the value of the return property.
-|          :ref:`TypeInfo<com.manticore.tools.xmldoclet.xmldoclet.xjc.TypeInfo>` value
+|          :ref:`TypeInfo<com.manticore.tools.xmldoclet.xjc.TypeInfo>` value
 
 
-| **getException** () → :ref:`List<java.util.List>`
-| Gets the value of the exception property.
-| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the exception property.
-| For example, to add a new item, do as follows: `getException().add(newItem);`
-| Objects of the following type(s) are allowed in the list `TypeInfo`
-|          returns :ref:`List<java.util.List>`
+| **getException** () → :ref:`TypeInfo><java.util.List<com.manticore.tools.xmldoclet.xjc.TypeInfo>>`
+| Gets the value of the exception property. 
+| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the exception property. 
+| For example, to add a new item, do as follows: `getException().add(newItem);` 
+| Objects of the following type(s) are allowed in the list ,`TypeInfo`,
+|          returns :ref:`TypeInfo><java.util.List<com.manticore.tools.xmldoclet.xjc.TypeInfo>>`
 
 
 
-| **getAnnotation** () → :ref:`List<java.util.List>`
-| Gets the value of the annotation property.
-| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the annotation property.
-| For example, to add a new item, do as follows: `getAnnotation().add(newItem);`
-| Objects of the following type(s) are allowed in the list `AnnotationInstance`
-|          returns :ref:`List<java.util.List>`
+| **getAnnotation** () → :ref:`AnnotationInstance><java.util.List<com.manticore.tools.xmldoclet.xjc.AnnotationInstance>>`
+| Gets the value of the annotation property. 
+| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the annotation property. 
+| For example, to add a new item, do as follows: `getAnnotation().add(newItem);` 
+| Objects of the following type(s) are allowed in the list ,`AnnotationInstance`,
+|          returns :ref:`AnnotationInstance><java.util.List<com.manticore.tools.xmldoclet.xjc.AnnotationInstance>>`
 
 
 
 | **getName** () → :ref:`String<java.lang.String>`
 | Gets the value of the name property.
-|          returns :ref:`String<java.lang.String>`  | possible object is `String`
+|          returns :ref:`String<java.lang.String>`
 
 
 
@@ -1425,7 +1695,7 @@ Method
 
 | **getSignature** () → :ref:`String<java.lang.String>`
 | Gets the value of the signature property.
-|          returns :ref:`String<java.lang.String>`  | possible object is `String`
+|          returns :ref:`String<java.lang.String>`
 
 
 
@@ -1436,7 +1706,7 @@ Method
 
 | **getQualified** () → :ref:`String<java.lang.String>`
 | Gets the value of the qualified property.
-|          returns :ref:`String<java.lang.String>`  | possible object is `String`
+|          returns :ref:`String<java.lang.String>`
 
 
 
@@ -1447,7 +1717,7 @@ Method
 
 | **getScope** () → :ref:`String<java.lang.String>`
 | Gets the value of the scope property.
-|          returns :ref:`String<java.lang.String>`  | possible object is `String`
+|          returns :ref:`String<java.lang.String>`
 
 
 
@@ -1458,7 +1728,7 @@ Method
 
 | **isAbstract** () → boolean
 | Gets the value of the abstract property.
-|          returns boolean  | possible object is `Boolean`
+|          returns boolean
 
 
 
@@ -1469,7 +1739,7 @@ Method
 
 | **isFinal** () → boolean
 | Gets the value of the final property.
-|          returns boolean  | possible object is `Boolean`
+|          returns boolean
 
 
 
@@ -1480,7 +1750,7 @@ Method
 
 | **isIncluded** () → boolean
 | Gets the value of the included property.
-|          returns boolean  | possible object is `Boolean`
+|          returns boolean
 
 
 
@@ -1491,7 +1761,7 @@ Method
 
 | **isNative** () → boolean
 | Gets the value of the native property.
-|          returns boolean  | possible object is `Boolean`
+|          returns boolean
 
 
 
@@ -1502,7 +1772,7 @@ Method
 
 | **isSynchronized** () → boolean
 | Gets the value of the synchronized property.
-|          returns boolean  | possible object is `Boolean`
+|          returns boolean
 
 
 
@@ -1513,7 +1783,7 @@ Method
 
 | **isStatic** () → boolean
 | Gets the value of the static property.
-|          returns boolean  | possible object is `Boolean`
+|          returns boolean
 
 
 
@@ -1524,7 +1794,7 @@ Method
 
 | **isVarArgs** () → boolean
 | Gets the value of the varArgs property.
-|          returns boolean  | possible object is `Boolean`
+|          returns boolean
 
 
 
@@ -1534,44 +1804,44 @@ Method
 
 
 
-..  _com.manticore.tools.xmldoclet.xmldoclet.xjc.MethodParameter:
+..  _com.manticore.tools.xmldoclet.xjc.MethodParameter:
 
 =======================================================================
 MethodParameter
 =======================================================================
 
-*extends:* :ref:`Object<java.lang.Object>`
+*extends:* :ref:`Object<java.lang.Object>` 
 
-|
-| Java class for methodParameter complex type.
-| The following schema fragment specifies the expected content contained within this class. `&lt;complexType name="methodParameter"&gt; &lt;complexContent&gt; &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt; &lt;sequence&gt; &lt;element name="type" type="{}typeInfo" minOccurs="0"/&gt; &lt;element name="annotation" type="{}annotationInstance" maxOccurs="unbounded" minOccurs="0"/&gt; &lt;/sequence&gt; &lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" /&gt; &lt;/restriction&gt; &lt;/complexContent&gt; &lt;/complexType&gt;`
+| 
+| Java class for methodParameter complex type. 
+| The following schema fragment specifies the expected content contained within this class. `{@code ``complexType name="methodParameter"`` ``complexContent`` ``restriction base="{http://www.w3.org/2001/XMLSchema}anyType"`` ``sequence`` ``element name="type" type="{}typeInfo" minOccurs="0"`` ``element name="annotation" type="{}annotationInstance" maxOccurs="unbounded" minOccurs="0"`` ``/sequence`` ``attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string"`` ``/restriction`` ``/complexContent`` ``/complexType`` }`
 
 | **MethodParameter** ()
 
 
-| **getType** () → :ref:`TypeInfo<com.manticore.tools.xmldoclet.xmldoclet.xjc.TypeInfo>`
+| **getType** () → :ref:`TypeInfo<com.manticore.tools.xmldoclet.xjc.TypeInfo>`
 | Gets the value of the type property.
-|          returns :ref:`TypeInfo<com.manticore.tools.xmldoclet.xmldoclet.xjc.TypeInfo>`  | possible object is `TypeInfo`
+|          returns :ref:`TypeInfo<com.manticore.tools.xmldoclet.xjc.TypeInfo>`
 
 
 
 | **setType** (value)
 | Sets the value of the type property.
-|          :ref:`TypeInfo<com.manticore.tools.xmldoclet.xmldoclet.xjc.TypeInfo>` value
+|          :ref:`TypeInfo<com.manticore.tools.xmldoclet.xjc.TypeInfo>` value
 
 
-| **getAnnotation** () → :ref:`List<java.util.List>`
-| Gets the value of the annotation property.
-| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the annotation property.
-| For example, to add a new item, do as follows: `getAnnotation().add(newItem);`
-| Objects of the following type(s) are allowed in the list `AnnotationInstance`
-|          returns :ref:`List<java.util.List>`
+| **getAnnotation** () → :ref:`AnnotationInstance><java.util.List<com.manticore.tools.xmldoclet.xjc.AnnotationInstance>>`
+| Gets the value of the annotation property. 
+| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the annotation property. 
+| For example, to add a new item, do as follows: `getAnnotation().add(newItem);` 
+| Objects of the following type(s) are allowed in the list ,`AnnotationInstance`,
+|          returns :ref:`AnnotationInstance><java.util.List<com.manticore.tools.xmldoclet.xjc.AnnotationInstance>>`
 
 
 
 | **getName** () → :ref:`String<java.lang.String>`
 | Gets the value of the name property.
-|          returns :ref:`String<java.lang.String>`  | possible object is `String`
+|          returns :ref:`String<java.lang.String>`
 
 
 
@@ -1581,148 +1851,148 @@ MethodParameter
 
 
 
-..  _com.manticore.tools.xmldoclet.xmldoclet.xjc.ObjectFactory:
+..  _com.manticore.tools.xmldoclet.xjc.ObjectFactory:
 
 =======================================================================
 ObjectFactory
 =======================================================================
 
-*extends:* :ref:`Object<java.lang.Object>`
+*extends:* :ref:`Object<java.lang.Object>` 
 
-| This object contains factory methods for each  Java content interface and Java element interface  generated in the com.manticore.tools.xmldoclet.xmldoclet.xjc package.
-| An ObjectFactory allows you to programatically  construct new instances of the Java representation  for XML content. The Java representation of XML  content can consist of schema derived interfaces  and classes representing the binding of schema  type definitions, element declarations and model  groups.  Factory methods for each of these are  provided in this class.
+| This object contains factory methods for each  Java content interface and Java element interface  generated in the com.manticore.tools.xmldoclet.xjc package.  
+| An ObjectFactory allows you to programmatically  construct new instances of the Java representation  for XML content. The Java representation of XML  content can consist of schema derived interfaces  and classes representing the binding of schema  type definitions, element declarations and model  groups.  Factory methods for each of these are  provided in this class.
 
 | **ObjectFactory** ()
-| Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: com.manticore.tools.xmldoclet.xmldoclet.xjc
+| Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: com.manticore.tools.xmldoclet.xjc
 
 
-| **createRoot** () → :ref:`Root<com.manticore.tools.xmldoclet.xmldoclet.xjc.Root>`
-| Create an instance of `Root`
-|          returns :ref:`Root<com.manticore.tools.xmldoclet.xmldoclet.xjc.Root>`
-
-
-
-| **createPackage** () → :ref:`Package<com.manticore.tools.xmldoclet.xmldoclet.xjc.Package>`
-| Create an instance of `Package`
-|          returns :ref:`Package<com.manticore.tools.xmldoclet.xmldoclet.xjc.Package>`
+| **createRoot** () → :ref:`Root<com.manticore.tools.xmldoclet.xjc.Root>`
+| Create an instance of ,`Root`
+|          returns :ref:`Root<com.manticore.tools.xmldoclet.xjc.Root>`
 
 
 
-| **createAnnotation** () → :ref:`Annotation<com.manticore.tools.xmldoclet.xmldoclet.xjc.Annotation>`
-| Create an instance of `Annotation`
-|          returns :ref:`Annotation<com.manticore.tools.xmldoclet.xmldoclet.xjc.Annotation>`
+| **createPackage** () → :ref:`Package<com.manticore.tools.xmldoclet.xjc.Package>`
+| Create an instance of ,`Package`
+|          returns :ref:`Package<com.manticore.tools.xmldoclet.xjc.Package>`
 
 
 
-| **createAnnotationElement** () → :ref:`AnnotationElement<com.manticore.tools.xmldoclet.xmldoclet.xjc.AnnotationElement>`
-| Create an instance of `AnnotationElement`
-|          returns :ref:`AnnotationElement<com.manticore.tools.xmldoclet.xmldoclet.xjc.AnnotationElement>`
+| **createAnnotation** () → :ref:`Annotation<com.manticore.tools.xmldoclet.xjc.Annotation>`
+| Create an instance of ,`Annotation`
+|          returns :ref:`Annotation<com.manticore.tools.xmldoclet.xjc.Annotation>`
 
 
 
-| **createAnnotationInstance** () → :ref:`AnnotationInstance<com.manticore.tools.xmldoclet.xmldoclet.xjc.AnnotationInstance>`
-| Create an instance of `AnnotationInstance`
-|          returns :ref:`AnnotationInstance<com.manticore.tools.xmldoclet.xmldoclet.xjc.AnnotationInstance>`
+| **createAnnotationElement** () → :ref:`AnnotationElement<com.manticore.tools.xmldoclet.xjc.AnnotationElement>`
+| Create an instance of ,`AnnotationElement`
+|          returns :ref:`AnnotationElement<com.manticore.tools.xmldoclet.xjc.AnnotationElement>`
 
 
 
-| **createAnnotationArgument** () → :ref:`AnnotationArgument<com.manticore.tools.xmldoclet.xmldoclet.xjc.AnnotationArgument>`
-| Create an instance of `AnnotationArgument`
-|          returns :ref:`AnnotationArgument<com.manticore.tools.xmldoclet.xmldoclet.xjc.AnnotationArgument>`
+| **createAnnotationInstance** () → :ref:`AnnotationInstance<com.manticore.tools.xmldoclet.xjc.AnnotationInstance>`
+| Create an instance of ,`AnnotationInstance`
+|          returns :ref:`AnnotationInstance<com.manticore.tools.xmldoclet.xjc.AnnotationInstance>`
 
 
 
-| **createEnum** () → :ref:`Enum<com.manticore.tools.xmldoclet.xmldoclet.xjc.Enum>`
-| Create an instance of `Enum`
-|          returns :ref:`Enum<com.manticore.tools.xmldoclet.xmldoclet.xjc.Enum>`
+| **createAnnotationArgument** () → :ref:`AnnotationArgument<com.manticore.tools.xmldoclet.xjc.AnnotationArgument>`
+| Create an instance of ,`AnnotationArgument`
+|          returns :ref:`AnnotationArgument<com.manticore.tools.xmldoclet.xjc.AnnotationArgument>`
 
 
 
-| **createEnumConstant** () → :ref:`EnumConstant<com.manticore.tools.xmldoclet.xmldoclet.xjc.EnumConstant>`
-| Create an instance of `EnumConstant`
-|          returns :ref:`EnumConstant<com.manticore.tools.xmldoclet.xmldoclet.xjc.EnumConstant>`
+| **createEnum** () → :ref:`Enum<com.manticore.tools.xmldoclet.xjc.Enum>`
+| Create an instance of ,`Enum`
+|          returns :ref:`Enum<com.manticore.tools.xmldoclet.xjc.Enum>`
 
 
 
-| **createInterface** () → :ref:`Interface<com.manticore.tools.xmldoclet.xmldoclet.xjc.Interface>`
-| Create an instance of `Interface`
-|          returns :ref:`Interface<com.manticore.tools.xmldoclet.xmldoclet.xjc.Interface>`
+| **createEnumConstant** () → :ref:`EnumConstant<com.manticore.tools.xmldoclet.xjc.EnumConstant>`
+| Create an instance of ,`EnumConstant`
+|          returns :ref:`EnumConstant<com.manticore.tools.xmldoclet.xjc.EnumConstant>`
 
 
 
-| **createClass** () → :ref:`Class<com.manticore.tools.xmldoclet.xmldoclet.xjc.Class>`
-| Create an instance of `Class`
-|          returns :ref:`Class<com.manticore.tools.xmldoclet.xmldoclet.xjc.Class>`
+| **createInterface** () → :ref:`Interface<com.manticore.tools.xmldoclet.xjc.Interface>`
+| Create an instance of ,`Interface`
+|          returns :ref:`Interface<com.manticore.tools.xmldoclet.xjc.Interface>`
 
 
 
-| **createConstructor** () → :ref:`Constructor<com.manticore.tools.xmldoclet.xmldoclet.xjc.Constructor>`
-| Create an instance of `Constructor`
-|          returns :ref:`Constructor<com.manticore.tools.xmldoclet.xmldoclet.xjc.Constructor>`
+| **createClass** () → :ref:`Class<com.manticore.tools.xmldoclet.xjc.Class>`
+| Create an instance of ,`Class`
+|          returns :ref:`Class<com.manticore.tools.xmldoclet.xjc.Class>`
 
 
 
-| **createMethod** () → :ref:`Method<com.manticore.tools.xmldoclet.xmldoclet.xjc.Method>`
-| Create an instance of `Method`
-|          returns :ref:`Method<com.manticore.tools.xmldoclet.xmldoclet.xjc.Method>`
+| **createConstructor** () → :ref:`Constructor<com.manticore.tools.xmldoclet.xjc.Constructor>`
+| Create an instance of ,`Constructor`
+|          returns :ref:`Constructor<com.manticore.tools.xmldoclet.xjc.Constructor>`
 
 
 
-| **createMethodParameter** () → :ref:`MethodParameter<com.manticore.tools.xmldoclet.xmldoclet.xjc.MethodParameter>`
-| Create an instance of `MethodParameter`
-|          returns :ref:`MethodParameter<com.manticore.tools.xmldoclet.xmldoclet.xjc.MethodParameter>`
+| **createMethod** () → :ref:`Method<com.manticore.tools.xmldoclet.xjc.Method>`
+| Create an instance of ,`Method`
+|          returns :ref:`Method<com.manticore.tools.xmldoclet.xjc.Method>`
 
 
 
-| **createField** () → :ref:`Field<com.manticore.tools.xmldoclet.xmldoclet.xjc.Field>`
-| Create an instance of `Field`
-|          returns :ref:`Field<com.manticore.tools.xmldoclet.xmldoclet.xjc.Field>`
+| **createMethodParameter** () → :ref:`MethodParameter<com.manticore.tools.xmldoclet.xjc.MethodParameter>`
+| Create an instance of ,`MethodParameter`
+|          returns :ref:`MethodParameter<com.manticore.tools.xmldoclet.xjc.MethodParameter>`
 
 
 
-| **createTypeInfo** () → :ref:`TypeInfo<com.manticore.tools.xmldoclet.xmldoclet.xjc.TypeInfo>`
-| Create an instance of `TypeInfo`
-|          returns :ref:`TypeInfo<com.manticore.tools.xmldoclet.xmldoclet.xjc.TypeInfo>`
+| **createField** () → :ref:`Field<com.manticore.tools.xmldoclet.xjc.Field>`
+| Create an instance of ,`Field`
+|          returns :ref:`Field<com.manticore.tools.xmldoclet.xjc.Field>`
 
 
 
-| **createTypeParameter** () → :ref:`TypeParameter<com.manticore.tools.xmldoclet.xmldoclet.xjc.TypeParameter>`
-| Create an instance of `TypeParameter`
-|          returns :ref:`TypeParameter<com.manticore.tools.xmldoclet.xmldoclet.xjc.TypeParameter>`
+| **createTypeInfo** () → :ref:`TypeInfo<com.manticore.tools.xmldoclet.xjc.TypeInfo>`
+| Create an instance of ,`TypeInfo`
+|          returns :ref:`TypeInfo<com.manticore.tools.xmldoclet.xjc.TypeInfo>`
 
 
 
-| **createWildcard** () → :ref:`Wildcard<com.manticore.tools.xmldoclet.xmldoclet.xjc.Wildcard>`
-| Create an instance of `Wildcard`
-|          returns :ref:`Wildcard<com.manticore.tools.xmldoclet.xmldoclet.xjc.Wildcard>`
+| **createTypeParameter** () → :ref:`TypeParameter<com.manticore.tools.xmldoclet.xjc.TypeParameter>`
+| Create an instance of ,`TypeParameter`
+|          returns :ref:`TypeParameter<com.manticore.tools.xmldoclet.xjc.TypeParameter>`
 
 
 
-| **createTagInfo** () → :ref:`TagInfo<com.manticore.tools.xmldoclet.xmldoclet.xjc.TagInfo>`
-| Create an instance of `TagInfo`
-|          returns :ref:`TagInfo<com.manticore.tools.xmldoclet.xmldoclet.xjc.TagInfo>`
+| **createWildcard** () → :ref:`Wildcard<com.manticore.tools.xmldoclet.xjc.Wildcard>`
+| Create an instance of ,`Wildcard`
+|          returns :ref:`Wildcard<com.manticore.tools.xmldoclet.xjc.Wildcard>`
+
+
+
+| **createTagInfo** () → :ref:`TagInfo<com.manticore.tools.xmldoclet.xjc.TagInfo>`
+| Create an instance of ,`TagInfo`
+|          returns :ref:`TagInfo<com.manticore.tools.xmldoclet.xjc.TagInfo>`
 
 
 
 
-..  _com.manticore.tools.xmldoclet.xmldoclet.xjc.Package:
+..  _com.manticore.tools.xmldoclet.xjc.Package:
 
 =======================================================================
 Package
 =======================================================================
 
-*extends:* :ref:`Object<java.lang.Object>`
+*extends:* :ref:`Object<java.lang.Object>` 
 
-|
-| Java class for package complex type.
-| The following schema fragment specifies the expected content contained within this class. `&lt;complexType name="package"&gt; &lt;complexContent&gt; &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt; &lt;sequence&gt; &lt;element name="comment" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt; &lt;element name="tag" type="{}tagInfo" maxOccurs="unbounded" minOccurs="0"/&gt; &lt;element name="annotation" type="{}annotation" maxOccurs="unbounded" minOccurs="0"/&gt; &lt;element name="enum" type="{}enum" maxOccurs="unbounded" minOccurs="0"/&gt; &lt;element name="interface" type="{}interface" maxOccurs="unbounded" minOccurs="0"/&gt; &lt;element name="class" type="{}class" maxOccurs="unbounded" minOccurs="0"/&gt; &lt;/sequence&gt; &lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" /&gt; &lt;/restriction&gt; &lt;/complexContent&gt; &lt;/complexType&gt;`
+| 
+| Java class for package complex type. 
+| The following schema fragment specifies the expected content contained within this class. `{@code ``complexType name="package"`` ``complexContent`` ``restriction base="{http://www.w3.org/2001/XMLSchema}anyType"`` ``sequence`` ``element name="comment" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"`` ``element name="tag" type="{}tagInfo" maxOccurs="unbounded" minOccurs="0"`` ``element name="annotation" type="{}annotation" maxOccurs="unbounded" minOccurs="0"`` ``element name="enum" type="{}enum" maxOccurs="unbounded" minOccurs="0"`` ``element name="interface" type="{}interface" maxOccurs="unbounded" minOccurs="0"`` ``element name="class" type="{}class" maxOccurs="unbounded" minOccurs="0"`` ``/sequence`` ``attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string"`` ``/restriction`` ``/complexContent`` ``/complexType`` }`
 
 | **Package** ()
 
 
 | **getComment** () → :ref:`String<java.lang.String>`
 | Gets the value of the comment property.
-|          returns :ref:`String<java.lang.String>`  | possible object is `String`
+|          returns :ref:`String<java.lang.String>`
 
 
 
@@ -1731,54 +2001,54 @@ Package
 |          :ref:`String<java.lang.String>` value
 
 
-| **getTag** () → :ref:`List<java.util.List>`
-| Gets the value of the tag property.
-| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the tag property.
-| For example, to add a new item, do as follows: `getTag().add(newItem);`
-| Objects of the following type(s) are allowed in the list `TagInfo`
-|          returns :ref:`List<java.util.List>`
+| **getTag** () → :ref:`TagInfo><java.util.List<com.manticore.tools.xmldoclet.xjc.TagInfo>>`
+| Gets the value of the tag property. 
+| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the tag property. 
+| For example, to add a new item, do as follows: `getTag().add(newItem);` 
+| Objects of the following type(s) are allowed in the list ,`TagInfo`,
+|          returns :ref:`TagInfo><java.util.List<com.manticore.tools.xmldoclet.xjc.TagInfo>>`
 
 
 
-| **getAnnotation** () → :ref:`List<java.util.List>`
-| Gets the value of the annotation property.
-| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the annotation property.
-| For example, to add a new item, do as follows: `getAnnotation().add(newItem);`
-| Objects of the following type(s) are allowed in the list `Annotation`
-|          returns :ref:`List<java.util.List>`
+| **getAnnotation** () → :ref:`Annotation><java.util.List<com.manticore.tools.xmldoclet.xjc.Annotation>>`
+| Gets the value of the annotation property. 
+| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the annotation property. 
+| For example, to add a new item, do as follows: `getAnnotation().add(newItem);` 
+| Objects of the following type(s) are allowed in the list ,`Annotation`,
+|          returns :ref:`Annotation><java.util.List<com.manticore.tools.xmldoclet.xjc.Annotation>>`
 
 
 
-| **getEnum** () → :ref:`List<java.util.List>`
-| Gets the value of the enum property.
-| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the enum property.
-| For example, to add a new item, do as follows: `getEnum().add(newItem);`
-| Objects of the following type(s) are allowed in the list `Enum`
-|          returns :ref:`List<java.util.List>`
+| **getEnum** () → :ref:`Enum><java.util.List<com.manticore.tools.xmldoclet.xjc.Enum>>`
+| Gets the value of the enum property. 
+| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the enum property. 
+| For example, to add a new item, do as follows: `getEnum().add(newItem);` 
+| Objects of the following type(s) are allowed in the list ,`Enum`,
+|          returns :ref:`Enum><java.util.List<com.manticore.tools.xmldoclet.xjc.Enum>>`
 
 
 
-| **getInterface** () → :ref:`List<java.util.List>`
-| Gets the value of the interface property.
-| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the interface property.
-| For example, to add a new item, do as follows: `getInterface().add(newItem);`
-| Objects of the following type(s) are allowed in the list `Interface`
-|          returns :ref:`List<java.util.List>`
+| **getInterface** () → :ref:`Interface><java.util.List<com.manticore.tools.xmldoclet.xjc.Interface>>`
+| Gets the value of the interface property. 
+| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the interface property. 
+| For example, to add a new item, do as follows: `getInterface().add(newItem);` 
+| Objects of the following type(s) are allowed in the list ,`Interface`,
+|          returns :ref:`Interface><java.util.List<com.manticore.tools.xmldoclet.xjc.Interface>>`
 
 
 
-| **getClazz** () → :ref:`List<java.util.List>`
-| Gets the value of the clazz property.
-| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the clazz property.
-| For example, to add a new item, do as follows: `getClazz().add(newItem);`
-| Objects of the following type(s) are allowed in the list `Class`
-|          returns :ref:`List<java.util.List>`
+| **getClazz** () → :ref:`Class><java.util.List<com.manticore.tools.xmldoclet.xjc.Class>>`
+| Gets the value of the clazz property. 
+| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the clazz property. 
+| For example, to add a new item, do as follows: `getClazz().add(newItem);` 
+| Objects of the following type(s) are allowed in the list ,`Class`,
+|          returns :ref:`Class><java.util.List<com.manticore.tools.xmldoclet.xjc.Class>>`
 
 
 
 | **getName** () → :ref:`String<java.lang.String>`
 | Gets the value of the name property.
-|          returns :ref:`String<java.lang.String>`  | possible object is `String`
+|          returns :ref:`String<java.lang.String>`
 
 
 
@@ -1788,49 +2058,49 @@ Package
 
 
 
-..  _com.manticore.tools.xmldoclet.xmldoclet.xjc.Root:
+..  _com.manticore.tools.xmldoclet.xjc.Root:
 
 =======================================================================
 Root
 =======================================================================
 
-*extends:* :ref:`Object<java.lang.Object>`
+*extends:* :ref:`Object<java.lang.Object>` 
 
-|
-| Java class for anonymous complex type.
-| The following schema fragment specifies the expected content contained within this class. `&lt;complexType&gt; &lt;complexContent&gt; &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt; &lt;sequence&gt; &lt;element name="package" type="{}package" maxOccurs="unbounded" minOccurs="0"/&gt; &lt;/sequence&gt; &lt;/restriction&gt; &lt;/complexContent&gt; &lt;/complexType&gt;`
+| 
+| Java class for anonymous complex type. 
+| The following schema fragment specifies the expected content contained within this class. `{@code ``complexType`` ``complexContent`` ``restriction base="{http://www.w3.org/2001/XMLSchema}anyType"`` ``sequence`` ``element name="package" type="{}package" maxOccurs="unbounded" minOccurs="0"`` ``/sequence`` ``/restriction`` ``/complexContent`` ``/complexType`` }`
 
 | **Root** ()
 
 
-| **getPackage** () → :ref:`List<java.util.List>`
-| Gets the value of the package property.
-| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the package property.
-| For example, to add a new item, do as follows: `getPackage().add(newItem);`
-| Objects of the following type(s) are allowed in the list `Package`
-|          returns :ref:`List<java.util.List>`
+| **getPackage** () → :ref:`Package><java.util.List<com.manticore.tools.xmldoclet.xjc.Package>>`
+| Gets the value of the package property. 
+| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the package property. 
+| For example, to add a new item, do as follows: `getPackage().add(newItem);` 
+| Objects of the following type(s) are allowed in the list ,`Package`,
+|          returns :ref:`Package><java.util.List<com.manticore.tools.xmldoclet.xjc.Package>>`
 
 
 
 
-..  _com.manticore.tools.xmldoclet.xmldoclet.xjc.TagInfo:
+..  _com.manticore.tools.xmldoclet.xjc.TagInfo:
 
 =======================================================================
 TagInfo
 =======================================================================
 
-*extends:* :ref:`Object<java.lang.Object>`
+*extends:* :ref:`Object<java.lang.Object>` 
 
-|
-| Java class for tagInfo complex type.
-| The following schema fragment specifies the expected content contained within this class. `&lt;complexType name="tagInfo"&gt; &lt;complexContent&gt; &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt; &lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" /&gt; &lt;attribute name="text" type="{http://www.w3.org/2001/XMLSchema}string" /&gt; &lt;/restriction&gt; &lt;/complexContent&gt; &lt;/complexType&gt;`
+| 
+| Java class for tagInfo complex type. 
+| The following schema fragment specifies the expected content contained within this class. `{@code ``complexType name="tagInfo"`` ``complexContent`` ``restriction base="{http://www.w3.org/2001/XMLSchema}anyType"`` ``attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string"`` ``attribute name="text" type="{http://www.w3.org/2001/XMLSchema}string"`` ``/restriction`` ``/complexContent`` ``/complexType`` }`
 
 | **TagInfo** ()
 
 
 | **getName** () → :ref:`String<java.lang.String>`
 | Gets the value of the name property.
-|          returns :ref:`String<java.lang.String>`  | possible object is `String`
+|          returns :ref:`String<java.lang.String>`
 
 
 
@@ -1841,7 +2111,7 @@ TagInfo
 
 | **getText** () → :ref:`String<java.lang.String>`
 | Gets the value of the text property.
-|          returns :ref:`String<java.lang.String>`  | possible object is `String`
+|          returns :ref:`String<java.lang.String>`
 
 
 
@@ -1851,44 +2121,44 @@ TagInfo
 
 
 
-..  _com.manticore.tools.xmldoclet.xmldoclet.xjc.TypeInfo:
+..  _com.manticore.tools.xmldoclet.xjc.TypeInfo:
 
 =======================================================================
 TypeInfo
 =======================================================================
 
-*extends:* :ref:`Object<java.lang.Object>`
+*extends:* :ref:`Object<java.lang.Object>` 
 
-|
-| Java class for typeInfo complex type.
-| The following schema fragment specifies the expected content contained within this class. `&lt;complexType name="typeInfo"&gt; &lt;complexContent&gt; &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt; &lt;sequence&gt; &lt;element name="wildcard" type="{}wildcard" minOccurs="0"/&gt; &lt;element name="generic" type="{}typeInfo" maxOccurs="unbounded" minOccurs="0"/&gt; &lt;/sequence&gt; &lt;attribute name="qualified" type="{http://www.w3.org/2001/XMLSchema}string" /&gt; &lt;attribute name="dimension" type="{http://www.w3.org/2001/XMLSchema}string" /&gt; &lt;/restriction&gt; &lt;/complexContent&gt; &lt;/complexType&gt;`
+| 
+| Java class for typeInfo complex type. 
+| The following schema fragment specifies the expected content contained within this class. `{@code ``complexType name="typeInfo"`` ``complexContent`` ``restriction base="{http://www.w3.org/2001/XMLSchema}anyType"`` ``sequence`` ``element name="wildcard" type="{}wildcard" minOccurs="0"`` ``element name="generic" type="{}typeInfo" maxOccurs="unbounded" minOccurs="0"`` ``/sequence`` ``attribute name="qualified" type="{http://www.w3.org/2001/XMLSchema}string"`` ``attribute name="dimension" type="{http://www.w3.org/2001/XMLSchema}string"`` ``/restriction`` ``/complexContent`` ``/complexType`` }`
 
 | **TypeInfo** ()
 
 
-| **getWildcard** () → :ref:`Wildcard<com.manticore.tools.xmldoclet.xmldoclet.xjc.Wildcard>`
+| **getWildcard** () → :ref:`Wildcard<com.manticore.tools.xmldoclet.xjc.Wildcard>`
 | Gets the value of the wildcard property.
-|          returns :ref:`Wildcard<com.manticore.tools.xmldoclet.xmldoclet.xjc.Wildcard>`  | possible object is `Wildcard`
+|          returns :ref:`Wildcard<com.manticore.tools.xmldoclet.xjc.Wildcard>`
 
 
 
 | **setWildcard** (value)
 | Sets the value of the wildcard property.
-|          :ref:`Wildcard<com.manticore.tools.xmldoclet.xmldoclet.xjc.Wildcard>` value
+|          :ref:`Wildcard<com.manticore.tools.xmldoclet.xjc.Wildcard>` value
 
 
-| **getGeneric** () → :ref:`List<java.util.List>`
-| Gets the value of the generic property.
-| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the generic property.
-| For example, to add a new item, do as follows: `getGeneric().add(newItem);`
-| Objects of the following type(s) are allowed in the list `TypeInfo`
-|          returns :ref:`List<java.util.List>`
+| **getGeneric** () → :ref:`TypeInfo><java.util.List<com.manticore.tools.xmldoclet.xjc.TypeInfo>>`
+| Gets the value of the generic property. 
+| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the generic property. 
+| For example, to add a new item, do as follows: `getGeneric().add(newItem);` 
+| Objects of the following type(s) are allowed in the list ,`TypeInfo`,
+|          returns :ref:`TypeInfo><java.util.List<com.manticore.tools.xmldoclet.xjc.TypeInfo>>`
 
 
 
 | **getQualified** () → :ref:`String<java.lang.String>`
 | Gets the value of the qualified property.
-|          returns :ref:`String<java.lang.String>`  | possible object is `String`
+|          returns :ref:`String<java.lang.String>`
 
 
 
@@ -1899,7 +2169,7 @@ TypeInfo
 
 | **getDimension** () → :ref:`String<java.lang.String>`
 | Gets the value of the dimension property.
-|          returns :ref:`String<java.lang.String>`  | possible object is `String`
+|          returns :ref:`String<java.lang.String>`
 
 
 
@@ -1909,33 +2179,33 @@ TypeInfo
 
 
 
-..  _com.manticore.tools.xmldoclet.xmldoclet.xjc.TypeParameter:
+..  _com.manticore.tools.xmldoclet.xjc.TypeParameter:
 
 =======================================================================
 TypeParameter
 =======================================================================
 
-*extends:* :ref:`Object<java.lang.Object>`
+*extends:* :ref:`Object<java.lang.Object>` 
 
-|
-| Java class for typeParameter complex type.
-| The following schema fragment specifies the expected content contained within this class. `&lt;complexType name="typeParameter"&gt; &lt;complexContent&gt; &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt; &lt;sequence&gt; &lt;element name="bound" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/&gt; &lt;/sequence&gt; &lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" /&gt; &lt;/restriction&gt; &lt;/complexContent&gt; &lt;/complexType&gt;`
+| 
+| Java class for typeParameter complex type. 
+| The following schema fragment specifies the expected content contained within this class. `{@code ``complexType name="typeParameter"`` ``complexContent`` ``restriction base="{http://www.w3.org/2001/XMLSchema}anyType"`` ``sequence`` ``element name="bound" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"`` ``/sequence`` ``attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string"`` ``/restriction`` ``/complexContent`` ``/complexType`` }`
 
 | **TypeParameter** ()
 
 
-| **getBound** () → :ref:`List<java.util.List>`
-| Gets the value of the bound property.
-| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the bound property.
-| For example, to add a new item, do as follows: `getBound().add(newItem);`
-| Objects of the following type(s) are allowed in the list `String`
-|          returns :ref:`List<java.util.List>`
+| **getBound** () → :ref:`String><java.util.List<java.lang.String>>`
+| Gets the value of the bound property. 
+| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the bound property. 
+| For example, to add a new item, do as follows: `getBound().add(newItem);` 
+| Objects of the following type(s) are allowed in the list ,`String`,
+|          returns :ref:`String><java.util.List<java.lang.String>>`
 
 
 
 | **getName** () → :ref:`String<java.lang.String>`
 | Gets the value of the name property.
-|          returns :ref:`String<java.lang.String>`  | possible object is `String`
+|          returns :ref:`String<java.lang.String>`
 
 
 
@@ -1945,36 +2215,36 @@ TypeParameter
 
 
 
-..  _com.manticore.tools.xmldoclet.xmldoclet.xjc.Wildcard:
+..  _com.manticore.tools.xmldoclet.xjc.Wildcard:
 
 =======================================================================
 Wildcard
 =======================================================================
 
-*extends:* :ref:`Object<java.lang.Object>`
+*extends:* :ref:`Object<java.lang.Object>` 
 
-|
-| Java class for wildcard complex type.
-| The following schema fragment specifies the expected content contained within this class. `&lt;complexType name="wildcard"&gt; &lt;complexContent&gt; &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt; &lt;sequence&gt; &lt;element name="extendsBound" type="{}typeInfo" maxOccurs="unbounded" minOccurs="0"/&gt; &lt;element name="superBound" type="{}typeInfo" maxOccurs="unbounded" minOccurs="0"/&gt; &lt;/sequence&gt; &lt;/restriction&gt; &lt;/complexContent&gt; &lt;/complexType&gt;`
+| 
+| Java class for wildcard complex type. 
+| The following schema fragment specifies the expected content contained within this class. `{@code ``complexType name="wildcard"`` ``complexContent`` ``restriction base="{http://www.w3.org/2001/XMLSchema}anyType"`` ``sequence`` ``element name="extendsBound" type="{}typeInfo" maxOccurs="unbounded" minOccurs="0"`` ``element name="superBound" type="{}typeInfo" maxOccurs="unbounded" minOccurs="0"`` ``/sequence`` ``/restriction`` ``/complexContent`` ``/complexType`` }`
 
 | **Wildcard** ()
 
 
-| **getExtendsBound** () → :ref:`List<java.util.List>`
-| Gets the value of the extendsBound property.
-| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the extendsBound property.
-| For example, to add a new item, do as follows: `getExtendsBound().add(newItem);`
-| Objects of the following type(s) are allowed in the list `TypeInfo`
-|          returns :ref:`List<java.util.List>`
+| **getExtendsBound** () → :ref:`TypeInfo><java.util.List<com.manticore.tools.xmldoclet.xjc.TypeInfo>>`
+| Gets the value of the extendsBound property. 
+| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the extendsBound property. 
+| For example, to add a new item, do as follows: `getExtendsBound().add(newItem);` 
+| Objects of the following type(s) are allowed in the list ,`TypeInfo`,
+|          returns :ref:`TypeInfo><java.util.List<com.manticore.tools.xmldoclet.xjc.TypeInfo>>`
 
 
 
-| **getSuperBound** () → :ref:`List<java.util.List>`
-| Gets the value of the superBound property.
-| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the superBound property.
-| For example, to add a new item, do as follows: `getSuperBound().add(newItem);`
-| Objects of the following type(s) are allowed in the list `TypeInfo`
-|          returns :ref:`List<java.util.List>`
+| **getSuperBound** () → :ref:`TypeInfo><java.util.List<com.manticore.tools.xmldoclet.xjc.TypeInfo>>`
+| Gets the value of the superBound property. 
+| This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a ``set`` method for the superBound property. 
+| For example, to add a new item, do as follows: `getSuperBound().add(newItem);` 
+| Objects of the following type(s) are allowed in the list ,`TypeInfo`,
+|          returns :ref:`TypeInfo><java.util.List<com.manticore.tools.xmldoclet.xjc.TypeInfo>>`
 
 
 
