@@ -133,6 +133,26 @@ description = 'XML Doclet'
 mavenPublishing {
     coordinates(group, "xml-doclet", version)
 
+    publishing {
+        publications {
+            shadow(MavenPublication) { publication ->
+                project.shadow.component(publication)
+
+                versionMapping {
+                    usage('java-api') {
+                        fromResolutionOf('runtimeClasspath')
+                    }
+                    usage('java-runtime') {
+                        fromResolutionResult()
+                    }
+                    allVariants {
+                        fromResolutionResult()
+                    }
+                }
+            }
+        }
+    }
+
     pom {
         name = 'XML Doclet'
         description = 'Doclet for writing XML file (instead of JavaDoc HTML)'
@@ -170,6 +190,11 @@ mavenPublishing {
             url = 'https://github.com/manticore-projects/xml-doclet.git'
         }
     }
+}
+
+// Fix signing task dependencies
+tasks.withType(AbstractPublishToMaven).configureEach {
+    dependsOn(tasks.withType(Sign))
 }
 
 signing {
