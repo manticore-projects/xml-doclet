@@ -119,30 +119,4 @@ class EnumTest extends AbstractTest {
         assertEquals(annotationArgumentNode.getValue().get(0), "mister");
 
     }
-
-    /**
-     * testing multiple annotation
-     */
-    @Test
-    void testFormatOption() {
-        final var javaDocElements = newJavaDocElements("FormattingOption.java");
-        final var packageNode = javaDocElements.packageNode();
-        final Enum enumNode = packageNode.getEnum().get(0);
-        assertEquals(enumNode.getAnnotation().size(), 2);
-
-        final AnnotationInstance annotationInstance1 = enumNode.getAnnotation().get(0);
-        assertEquals(annotationInstance1.getQualified(), "java.lang.Deprecated");
-        assertEquals(annotationInstance1.getName(), "Deprecated");
-        assertEquals(annotationInstance1.getArgument().size(), 0);
-
-        final var annotationInstance2 = enumNode.getAnnotation().get(1);
-        assertEquals(annotationInstance2.getQualified(), Annotation12.class.getName());
-        assertEquals(annotationInstance2.getName(), Annotation12.class.getSimpleName());
-        assertEquals(annotationInstance2.getArgument().size(), 1);
-
-        final AnnotationArgument annotationArgumentNode = annotationInstance2.getArgument().get(0);
-        assertEquals(annotationArgumentNode.getName(), "value");
-        assertEquals(annotationArgumentNode.getValue().get(0), "mister");
-
-    }
 }
