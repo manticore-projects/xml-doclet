@@ -16,7 +16,7 @@ final class SupportedOptions {
     /**
      * A Map where the key is an option name and the value is the argument value
      * (considering each argument has at most one value).
-     * It stores all sucessfuly parsed options given to the Doclet in the command line.
+     * It stores all successfully parsed options given to the Doclet in the command line.
      */
     private final Map<String, String> givenCliOptionsMap = new HashMap<>();
 
@@ -39,7 +39,16 @@ final class SupportedOptions {
                 newOneArgOption("doctitle", "Document Title\n"),
                 newOneArgOption("windowtitle", "Window Title\n"),
                 newNoArgOption("noTimestamp", "No Timestamp.\n"),
-                newNoArgOption("withFloatingToc", "Renders a Floating TOC on the right side.\n"));
+                newNoArgOption("withFloatingToc", "Renders a Floating TOC on the right side.\n"),
+
+                // Compatibility to standard JavaDoc options since there is no apparent way to filter/remove
+                newNoArgOption("Xdoclint:none", "Compatibility only, will be ignored.\n"),
+                newNoArgOption("Xdoclint:all", "Compatibility only, will be ignored.\n"),
+                newNoArgOption("Xdoclint:html", "Compatibility only, will be ignored.\n"),
+                newNoArgOption("Xdoclint:syntax", "Compatibility only, will be ignored.\n"),
+                newNoArgOption("Xdoclint:reference", "Compatibility only, will be ignored.\n"),
+                newNoArgOption("Xdoclint:missing", "Compatibility only, will be ignored.\n"),
+                newNoArgOption("html5", "Compatibility only, will be ignored.\n"));
     }
 
     public Set<CustomOption> get() {

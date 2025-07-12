@@ -2,6 +2,31 @@
 
 Changelog of xml-doclet.
 
+## 2.0.8 (2025-07-12)
+
+### Other changes
+
+
+## 2.0.7 (2025-07-12)
+
+### Other changes
+
+
+## 2.0.6 (2025-07-12)
+
+### Other changes
+
+
+## 2.0.5 (2025-07-12)
+
+### Other changes
+
+
+## 2.0.4 (2025-07-12)
+
+### Other changes
+
+
 ## 2.0.3 (2025-03-03)
 
 ### Bug Fixes

@@ -290,15 +290,17 @@ tasks.register('xmldoc', Javadoc) {
     dependsOn(jar)
     source = sourceSets.main.allJava
     classpath = sourceSets.main.runtimeClasspath
-
     // beware: Gradle deletes this folder automatically and there is no switch-off
     destinationDir = reporting.file("xmlDoclet")
-    options.docletpath = configurations.xmlDoclet.files.asType(List)
-    options.doclet = "com.manticore.tools.xmldoclet.XmlDoclet"
     title = "API $version"
-    options.addBooleanOption("rst", true)
-    options.addBooleanOption("withFloatingToc", true)
-    options.addStringOption("basePackage", "com.manticore.tools.xmldoclet")
+
+    options {
+        docletpath = configurations.xmlDoclet.files.asType(List)
+        doclet = "com.manticore.tools.xmldoclet.XmlDoclet"
+        addBooleanOption("rst", true)
+        addBooleanOption("withFloatingToc", true)
+        addStringOption("basePackage", "com.manticore.tools.xmldoclet")
+    }
 
     doLast {
         copy {

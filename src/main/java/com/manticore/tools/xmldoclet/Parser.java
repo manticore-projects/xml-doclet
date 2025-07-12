@@ -81,9 +81,9 @@ public class Parser {
 
         // Fix issue #12: Remove commas that are added around HTML tags and entities
         // Pattern: comma followed by < or & or > or ;
-        commentText = commentText.replaceAll(",(<|&|>|;)", "$1");
+        commentText = commentText.replaceAll(",([<&>;])", "$1");
         // Pattern: < or & or > or ; followed by comma
-        commentText = commentText.replaceAll("(<|&|>|;),", "$1");
+        commentText = commentText.replaceAll("([<&>;]),", "$1");
 
         return commentText;
     }
