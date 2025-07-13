@@ -133,7 +133,7 @@ public final class XmlDoclet implements Doclet {
             transformer.setDestination(serializer);
 
             for (final Map.Entry<String, String> parameter : parameters.entrySet()) {
-                if (parameter.getKey()!=null && !parameter.getKey().isEmpty()) {
+                if (parameter.getKey() != null && !parameter.getKey().isEmpty()) {
                     final var name = new QName(parameter.getKey());
                     if (parameter.getValue() != null) {
                         final var values = new XdmAtomicValue(parameter.getValue());
