@@ -1,6 +1,18 @@
 
+                .. raw:: html
+
+                <div id="floating-toc">
+                <div class="search-container">
+                <input type="button" id="toc-hide-show-btn"></input>
+                <input type="text" id="toc-search" placeholder="Search" />
+                </div>
+                <ul id="toc-list"></ul>
+                </div>
+
+
+            
             #######################################################################
-        API 2.1.0-SNAPSHOT
+        API 2.2-SNAPSHOT
         #######################################################################
 
     Base Package: com.manticore.tools.xmldoclet

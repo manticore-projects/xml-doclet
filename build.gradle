@@ -294,12 +294,13 @@ tasks.register('xmldoc', Javadoc) {
     options {
         docletpath = configurations.xmlDoclet.files.asType(List)
         doclet = "com.manticore.tools.xmldoclet.XmlDoclet"
+        addStringOption("basePackage", "com.manticore.tools.xmldoclet")
+
         addBooleanOption("rst", true)
         addBooleanOption("adoc", true)
         addBooleanOption("md", true)
         addBooleanOption("docbook", true)
         addBooleanOption("withFloatingToc", true)
-        addStringOption("basePackage", "com.manticore.tools.xmldoclet")
     }
 
     doLast {
@@ -343,7 +344,7 @@ spotbugs {
 
 pmd {
     consoleOutput = false
-    //toolVersion = "6.46.0"
+    toolVersion = "7.15.0"
 
     sourceSets = [sourceSets.main]
 

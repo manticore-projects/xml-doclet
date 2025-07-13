@@ -136,6 +136,7 @@ public final class XmlDoclet implements Doclet {
                 if (parameter.getKey() != null && !parameter.getKey().isEmpty()) {
                     final var name = new QName(parameter.getKey());
                     if (parameter.getValue() != null) {
+                        LOGGER.log(Level.FINE, "Parameter " + name + " = " + parameter.getValue());
                         final var values = new XdmAtomicValue(parameter.getValue());
                         transformer.setParameter(name, values);
                     } else {
@@ -186,10 +187,32 @@ public final class XmlDoclet implements Doclet {
 
             reporter.print(Diagnostic.Kind.NOTE, "Wrote XML to: " + xmlFile.getAbsolutePath());
 
+            // translate the Doclet CLI Options into XSL compatible parameters
+            // filter out incompatible options like `-XLint:...`
             final var parameters = new HashMap<String, String>();
             for (final var option : options.get()) {
-                final String optionValue = options.getOptionValue(option, "true");
-                parameters.put(option.getParameters(), optionValue);
+                // the name starts with a hyphen
+                String name = option.getName();
+                if (name.startsWith("-")) {
+                    name = name.substring(1);
+                }
+
+                // loop through all possible options and check if it has been set
+                if (options.hasOption(name)) {
+                    // if option is provided without an argument, assume it is a boolean switch
+                    // relevant for `withFloatingToc` especially
+                    String optionValue = options.getOptionValue(option, "true");
+                    if (optionValue == null || optionValue.isEmpty()) {
+                        optionValue = "true";
+                    }
+
+                    if (name.contains(",") || name.contains(":")) {
+                        LOGGER.fine("Ignore " + name + " " + optionValue);
+                    } else {
+                        LOGGER.fine(name + " " + optionValue);
+                        parameters.put(name, optionValue);
+                    }
+                }
             }
 
             if (options.hasOption("rst")) {

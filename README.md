@@ -2,11 +2,14 @@
 
 [Website](https://www.manticore-projects.com/XMLDoclet) | [Documentation](https://www.manticore-projects.com/XMLDoclet/usage.html) | [Example](https://www.manticore-projects.com/JSQLParser/javadoc_snapshot.html#analyticexpression)
 
-This library provides a doclet to output the javadoc comments from Java source code to a XML or a Restructured Text (*.rst) document.
+This library provides a doclet to output the javadoc comments from Java source code to a XML which can be transformed into:
+
+- ReStructured Text for Python Sphinx and DocUtils
+- Markdown
+- DocBook XML for DBLatex PDF files
+- ASCII Doctor
 
 All modern JDKs 17, 21 and 23 are supported by XmlDoclet-2.+ and JDK 11 is supported by XMLDoc-1.4.+ only.
-
-Planned support for Markdown (*.md), Docbook XML and ASCII Doctor (*.adoc). Sponsors or Contributors are most welcome.
 
 Example
 -------
@@ -17,12 +20,6 @@ Gradle
 ------
 
 ```gradle
-repositories {
-    // Sonatype OSSRH
-    maven {
-        url = uri('https://s01.oss.sonatype.org/content/repositories/snapshots/')
-    }
-}
 configurations {
     xmlDoclet
 }
@@ -30,29 +27,29 @@ dependencies {
     xmlDoclet 'com.manticore-projects.tools:xml-doclet:+'
 }
 tasks.register('xmldoc', Javadoc) {
-    // optionally include some extra sources, e.g. generated source files
-    // include = '..'
-    
+    dependsOn(jar)
     source = sourceSets.main.allJava
-    
-    // beware, that this folder will be overwritten hard by Gradle
+    classpath = sourceSets.main.runtimeClasspath
+    // beware: Gradle deletes this folder automatically and there is no switch-off
     destinationDir = reporting.file("xmlDoclet")
-    options.docletpath = configurations.xmlDoclet.files.asType(List)
-    
-    // for XmlDoclet-2.+ and JDK17+
-    options.doclet = "com.manticore.tools.xmldoclet.XmlDoclet"
-    
-    // for XmlDoclet-1.+ and JDK11+
-    // options.doclet = "com.github.markusbernhardt.xmldoclet.XmlDoclet"
+    title = "API $version"
 
-    // transform to Restructured Text and copy to Sphinx Source folder
-    options.addBooleanOption("rst", true)
-    options.addStringOption("basePackage", "net.sf.jsqlparser")
+    options {
+        docletpath = configurations.xmlDoclet.files.asType(List)
+        doclet = "com.manticore.tools.xmldoclet.XmlDoclet"
+        addStringOption("basePackage", "com.manticore.tools.xmldoclet")
+
+        addBooleanOption("rst", true)
+        addBooleanOption("adoc", true)
+        addBooleanOption("md", true)
+        addBooleanOption("docbook", true)
+        addBooleanOption("withFloatingToc", true)
+    }
 
     doLast {
         copy {
             from reporting.file("xmlDoclet/javadoc.rst")
-            into "${projectDir}/src/site/sphinx/"
+            into "${projectDir}/src/site/sphinx"
         }
     }
 }
@@ -64,22 +61,13 @@ Maven
 If you are using maven you can use this library by adding the following report to your pom.xml:
 
 ```xml
-<repositories>
-    <repository>
-        <id>jsqlparser-snapshots</id>
-        <snapshots>
-            <enabled>true</enabled>
-        </snapshots>
-        <url>https://oss.sonatype.org/content/groups/public/</url>
-    </repository>
-</repositories>
 <plugin>
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-javadoc-plugin</artifactId>
     <executions>
         <execution>
             <id>xml-doclet</id>
-        <phase>prepare-package</phase>
+            <phase>prepare-package</phase>
             <goals>
                 <goal>javadoc</goal>
             </goals>
@@ -90,7 +78,7 @@ If you are using maven you can use this library by adding the following report t
                 <docletArtifact>
                     <groupId>com.manticore-projects.tools</groupId>
                     <artifactId>xml-doclet</artifactId>
-                    <version>2.0.0</version>
+                    <version>[2.1,)</version>
                 </docletArtifact>
             </configuration>
         </execution>

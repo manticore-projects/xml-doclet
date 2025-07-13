@@ -2,6 +2,23 @@
 
 Changelog of xml-doclet.
 
+## 2.1.0 (2025-07-13)
+
+### Features
+
+-  support MD, ADOC, Docbook ([44ec5](https://github.com/manticore-projects/xml-doclet/commit/44ec50f40d4706d) manticore-projects)  
+-  working markdown stylesheet ([f4571](https://github.com/manticore-projects/xml-doclet/commit/f45710453e09854) manticore-projects)  
+-  working docbook stylesheet ([d61c5](https://github.com/manticore-projects/xml-doclet/commit/d61c5020563ebfe) manticore-projects)  
+
+### Other changes
+
+
+## 2.0.9 (2025-07-12)
+
+### Features
+
+-  implement `Xdoclint` and `html5` options since those are set by Gradle and can't get switched off ([32ae4](https://github.com/manticore-projects/xml-doclet/commit/32ae49181922fc1) manticore-projects)  
+
 ## 2.0.8 (2025-07-12)
 
 ### Other changes
