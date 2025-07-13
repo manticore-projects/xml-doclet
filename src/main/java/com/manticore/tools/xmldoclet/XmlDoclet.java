@@ -33,6 +33,8 @@ public final class XmlDoclet implements Doclet {
 
     public static final String RESTRUCTURED_XSL = "/com/manticore/xsl/restructured.xsl";
     public static final String MARKDOWN_XSL = "/com/manticore/xsl/markdown.xsl";
+    public static final String ASCII_DOC_XSL = "/com/manticore/xsl/adoc.xsl";
+    public static final String DOCBOOK_XSL = "/com/manticore/xsl/docbook.xsl";
 
     /**
      * The parsed object model. Used in unit tests.
@@ -131,9 +133,15 @@ public final class XmlDoclet implements Doclet {
             transformer.setDestination(serializer);
 
             for (final Map.Entry<String, String> parameter : parameters.entrySet()) {
-                final var name = new QName(parameter.getKey());
-                final var values = new XdmAtomicValue(parameter.getValue());
-                transformer.setParameter(name, values);
+                if (parameter.getKey()!=null && !parameter.getKey().isEmpty()) {
+                    final var name = new QName(parameter.getKey());
+                    if (parameter.getValue() != null) {
+                        final var values = new XdmAtomicValue(parameter.getValue());
+                        transformer.setParameter(name, values);
+                    } else {
+                        LOGGER.log(Level.WARNING, "Parameter is null: " + name);
+                    }
+                }
             }
 
             // Transform the XML
@@ -205,11 +213,23 @@ public final class XmlDoclet implements Doclet {
             }
 
             if (options.hasOption("docbook")) {
-                reporter.print(Diagnostic.Kind.WARNING, "Docbook transformation is not supported yet.");
+                final var outFile = new File(xmlFile.getParent(), basename + ".db.xml");
+                try (var inputStream = XmlDoclet.class.getResourceAsStream(DOCBOOK_XSL);) {
+                    transform(inputStream, xmlFile, outFile, parameters);
+                } catch (Exception ex) {
+                    LOGGER.log(Level.SEVERE, "Failed to write Docbook", ex);
+                }
+                reporter.print(Diagnostic.Kind.NOTE, "Wrote Docbook to: " + outFile.getAbsolutePath());
             }
 
             if (options.hasOption("adoc")) {
-                reporter.print(Diagnostic.Kind.WARNING, "ASCII transformation is not supported yet.");
+                final var outFile = new File(xmlFile.getParent(), basename + ".adoc");
+                try (var inputStream = XmlDoclet.class.getResourceAsStream(ASCII_DOC_XSL);) {
+                    transform(inputStream, xmlFile, outFile, parameters);
+                } catch (Exception ex) {
+                    LOGGER.log(Level.SEVERE, "Failed to write ASCII Doc", ex);
+                }
+                reporter.print(Diagnostic.Kind.NOTE, "Wrote ASCII Doc to: " + outFile.getAbsolutePath());
             }
         } catch (RuntimeException | IOException | JAXBException e) {
             LOGGER.log(Level.SEVERE, "Failed to write the XML File", e);

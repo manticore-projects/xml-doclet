@@ -92,36 +92,33 @@ def getVersion = { boolean considerSnapshot ->
     Integer minor = 0
     Integer patch = null
     Integer build = null
-    def commit = null
-    def snapshot = ""
+    String commit = null
+    String snapshot = ""
 
-    def output = new ByteArrayOutputStream()
-    def process = new ProcessBuilder('git', '--no-pager', 'describe', '--tags', '--always', '--dirty=-SNAPSHOT')
-            .redirectErrorStream(true)
-            .start()
-    process.inputStream.withReader { reader -> output << reader.text }
-    process.waitFor()
+    def versionStr = providers.exec {
+        commandLine "git", "--no-pager", "-C", project.projectDir,  "describe", "--tags", "--always", "--dirty=-SNAPSHOT"
+    }.standardOutput.asText.get().trim()
 
-    def versionStr = output.toString().trim()
     def pattern = /(?<major>\d*)\.(?<minor>\d*)(\.(?<patch>\d*))?(-(?<build>\d*)-(?<commit>[a-zA-Z\d]*))?/
     def matcher = versionStr =~ pattern
+
     if (matcher.find()) {
-        major = matcher.group('major') as Integer
-        minor = matcher.group('minor') as Integer
-        patch = matcher.group('patch') as Integer
-        build = matcher.group('build') as Integer
-        commit = matcher.group('commit')
+        major = matcher.group('major') as Integer ?: 0
+        minor = matcher.group('minor') as Integer ?: 0
+        patch = matcher.group('patch') as Integer ?: null
+        build = matcher.group('build') as Integer ?: null
+        commit = matcher.group('commit') ?: null
     }
 
-    if (considerSnapshot && ( versionStr.endsWith('SNAPSHOT') || build!=null) ) {
+    if (considerSnapshot && (versionStr.endsWith('SNAPSHOT') || build != null)) {
         minor++
-        if (patch!=null) patch = 0
+        if (patch != null) patch = 0
         snapshot = "-SNAPSHOT"
     }
 
-    return patch!=null
+    return patch != null
             ? "${major}.${minor}.${patch}${snapshot}"
-            :  "${major}.${minor}${snapshot}"
+            : "${major}.${minor}${snapshot}"
 }
 
 // for publishing a release, call Gradle with Environment Variable RELEASE:
@@ -298,6 +295,9 @@ tasks.register('xmldoc', Javadoc) {
         docletpath = configurations.xmlDoclet.files.asType(List)
         doclet = "com.manticore.tools.xmldoclet.XmlDoclet"
         addBooleanOption("rst", true)
+        addBooleanOption("adoc", true)
+        addBooleanOption("md", true)
+        addBooleanOption("docbook", true)
         addBooleanOption("withFloatingToc", true)
         addStringOption("basePackage", "com.manticore.tools.xmldoclet")
     }

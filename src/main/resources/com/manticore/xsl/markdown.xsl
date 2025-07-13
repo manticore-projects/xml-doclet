@@ -30,20 +30,76 @@
         <xsl:param name="input"/>
         <xsl:choose>
             <xsl:when test="$input and string-length($input) > 0">
-                <xsl:variable name="linkTag" select='replace($input, "\{@link [\s|\n]*([^\}]*[^\s])[\s|\n]*\}", "`$1`", "i")' />
-                <xsl:variable name="preTag" select='replace($linkTag, "&lt;pre&gt;\s*([\s\S]*?)\s*&lt;/pre&gt;", "&#xa;&#xa;```&#xa;$1&#xa;```&#xa;&#xa;", "i")'  />
-                <xsl:variable name="codeTag" select='replace($preTag, "\{@code [\s|\n]*([^\}]*[^\s])[\s|\n]*\}", "`$1`", "i")' />
-                <xsl:variable name="codeTag1" select='replace($codeTag, "&lt;code&gt;\s*([\s\S]*?)\s*&lt;/code&gt;", "`$1`", "i")' />
+                <!-- Handle {@code} blocks - detect if content should be inline or block -->
+                <xsl:variable name="step1">
+                    <xsl:analyze-string select="$input" regex="\{{@code\s*(.*?)\s*\}}" flags="s">
+                        <xsl:matching-substring>
+                            <xsl:variable name="codeContent" select="normalize-space(regex-group(1))"/>
+                            <xsl:choose>
+                                <xsl:when test="contains($codeContent, '&#xa;') or string-length($codeContent) > 60">
+                                    <!-- Multi-line or very long code - use code block -->
+                                    <xsl:text>&#xa;&#xa;```&#xa;</xsl:text>
+                                    <xsl:value-of select="$codeContent"/>
+                                    <xsl:text>&#xa;```&#xa;&#xa;</xsl:text>
+                                </xsl:when>
+                                <xsl:when test="string-length($codeContent) > 0">
+                                    <!-- Short single-line code - use inline code -->
+                                    <xsl:text>`</xsl:text>
+                                    <xsl:value-of select="$codeContent"/>
+                                    <xsl:text>`</xsl:text>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <!-- Empty code block - remove it -->
+                                    <xsl:text></xsl:text>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </xsl:matching-substring>
+                        <xsl:non-matching-substring>
+                            <xsl:value-of select="."/>
+                        </xsl:non-matching-substring>
+                    </xsl:analyze-string>
+                </xsl:variable>
 
-                <xsl:variable name="normalized" select='replace($codeTag1, "\n\s*", " ", "i")' />
-                <xsl:variable name="normalized1" select='replace($normalized, "&lt;p&gt;\s*([\s\S]*?)\s*&lt;/p&gt;", "&#xa;&#xa;$1&#xa;&#xa;", "i")' />
-                <xsl:variable name="normalized2" select='replace($normalized1, "&lt;blockquote&gt;\s*([\s\S]*?)\s*&lt;/blockquote&gt;", "&#xa;&#xa;&gt; $1&#xa;&#xa;", "i")'  />
-                <xsl:variable name="normalized3" select='replace($normalized2, "&lt;p&gt;\s*", "&#xa;&#xa;", "i")' />
-                <xsl:variable name="normalized4" select='replace($normalized3, "&lt;br&gt;\s*", "&#xa;", "i")' />
+                <!-- Handle {@link} tags -->
+                <xsl:variable name="step2" select='replace($step1, "\{@link\s+([^}]+)\}", "`$1`")' />
 
-                <xsl:variable name="anyTag" select='replace($normalized4, "&lt;\s*([\s\S]*?)\s*/?&gt;", "", "i")' />
+                <!-- Handle HTML <pre> tags -->
+                <xsl:variable name="preTag" select='replace($step2, "&lt;pre&gt;(.*?)&lt;/pre&gt;", "&#xa;&#xa;```&#xa;$1&#xa;```&#xa;&#xa;", "s")'  />
 
-                <xsl:value-of select="normalize-space($anyTag)"/>
+                <!-- Handle HTML <code> tags -->
+                <xsl:variable name="htmlCodeTag" select='replace($preTag, "&lt;code&gt;(.*?)&lt;/code&gt;", "`$1`", "s")' />
+
+                <!-- Handle paragraph tags -->
+                <xsl:variable name="paragraphTag" select='replace($htmlCodeTag, "&lt;p&gt;(.*?)&lt;/p&gt;", "&#xa;&#xa;$1&#xa;&#xa;", "s")' />
+
+                <!-- Handle blockquote tags -->
+                <xsl:variable name="blockquoteTag" select='replace($paragraphTag, "&lt;blockquote&gt;(.*?)&lt;/blockquote&gt;", "&#xa;&#xa;&gt; $1&#xa;&#xa;", "s")'  />
+
+                <!-- Handle standalone <p> and <br> tags -->
+                <xsl:variable name="standaloneP" select='replace($blockquoteTag, "&lt;p&gt;", "&#xa;&#xa;")' />
+                <xsl:variable name="lineBreaks" select='replace($standaloneP, "&lt;br\s*/?&gt;", "&#xa;")' />
+
+                <!-- Remove any remaining HTML tags -->
+                <xsl:variable name="cleanHtml" select='replace($lineBreaks, "&lt;[^&gt;]*&gt;", "")' />
+
+                <!-- Clean up remaining JavaDoc artifacts -->
+                <xsl:variable name="cleanJavaDoc" select='replace($cleanHtml, "\{@[^}]*\}", "")' />
+
+                <!-- Fix formatting issues with commas and punctuation -->
+                <xsl:variable name="fixCommas" select='replace($cleanJavaDoc, "\s*,\s*```[^`]*```\s*,\s*", " ")' />
+                <xsl:variable name="fixExtraCommas" select='replace($fixCommas, "\s*,\s*`[^`]*`\s*,\s*", " `$1` ")' />
+
+                <!-- Fix empty or malformed code blocks -->
+                <xsl:variable name="fixEmptyCode" select='replace($fixExtraCommas, "```\s*```", "")' />
+                <xsl:variable name="fixDanglingBraces" select='replace($fixEmptyCode, "^\s*\}\s*```\s*$", "", "m")' />
+                <xsl:variable name="fixOrphanBraces" select='replace($fixDanglingBraces, "^\s*\}\s*$", "", "m")' />
+
+                <!-- Normalize whitespace but preserve intended structure -->
+                <xsl:variable name="normalizedSpaces" select='replace($fixOrphanBraces, "[ \t]+", " ")' />
+                <xsl:variable name="cleanLines" select='replace($normalizedSpaces, "\n\s*\n\s*\n+", "&#xa;&#xa;")' />
+                <xsl:variable name="trimmed" select='replace($cleanLines, "^\s+|\s+$", "")' />
+
+                <xsl:value-of select="$trimmed"/>
             </xsl:when>
             <xsl:otherwise>
                 <xsl:text/>
@@ -53,10 +109,46 @@
 
     <xsl:function name="my:className">
         <xsl:param name="input"/>
+        <xsl:param name="context"/>
         <xsl:choose>
             <xsl:when test="$input and string-length($input) > 0 and contains($input, '.')">
-                <xsl:variable name="name" select="tokenize($input,'\.')[last()]" />
-                <xsl:value-of select="concat('[', $name, '](#', $input, ')')"/>
+                <!-- Extract the base class name before any generic type parameters -->
+                <xsl:variable name="baseType" select="if (contains($input, '&lt;')) then substring-before($input, '&lt;') else $input" />
+                <xsl:variable name="name" select="tokenize($baseType,'\.')[last()]" />
+                <!-- Extract generic part if it exists -->
+                <xsl:variable name="genericPart" select="if (contains($input, '&lt;')) then substring-after($input, '&lt;') else ''" />
+
+                <!-- Check if this class exists in the current document -->
+                <xsl:variable name="localClass" select="$context//class[@qualified=$baseType] | $context//interface[@qualified=$baseType] | $context//enum[@qualified=$baseType]" />
+
+                <xsl:choose>
+                    <xsl:when test="$genericPart != ''">
+                        <!-- Handle generic types: show display name with generics -->
+                        <xsl:variable name="displayName" select="concat($name, '&lt;', substring-before($genericPart, '&gt;'), '&gt;')" />
+                        <xsl:choose>
+                            <xsl:when test="$localClass">
+                                <!-- Link to local class using qualified name as anchor -->
+                                <xsl:value-of select="concat('[', $displayName, '](#', $baseType, ')')"/>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <!-- External class - just show as text -->
+                                <xsl:value-of select="concat('`', $displayName, '`')"/>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:choose>
+                            <xsl:when test="$localClass">
+                                <!-- Link to local class using qualified name as anchor -->
+                                <xsl:value-of select="concat('[', $name, '](#', $baseType, ')')"/>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <!-- External class - just show as text -->
+                                <xsl:value-of select="concat('`', $name, '`')"/>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:otherwise>
+                </xsl:choose>
             </xsl:when>
             <xsl:when test="$input and string-length($input) > 0">
                 <xsl:value-of select="concat('`', $input, '`')" />
@@ -142,7 +234,7 @@
                     <xsl:for-each select="interface">
                         <xsl:sort select="@name"/>
                         <xsl:if test="@qualified and string-length(@qualified) > 0">
-                            <xsl:value-of select="my:className(@qualified)"/>
+                            <xsl:value-of select="my:className(@qualified, root())"/>
                             <xsl:if test="position() != last()">
                                 <xsl:text>, </xsl:text>
                             </xsl:if>
@@ -158,7 +250,7 @@
                     <xsl:for-each select="//*[interface[@qualified=$qualifiedInterfaceName]]">
                         <xsl:sort select="@name"/>
                         <xsl:if test="@qualified and string-length(@qualified) > 0">
-                            <xsl:value-of select="my:className(@qualified)"/>
+                            <xsl:value-of select="my:className(@qualified, root())"/>
                             <xsl:if test="position() != last()">
                                 <xsl:text>, </xsl:text>
                             </xsl:if>
@@ -193,7 +285,7 @@
                 <xsl:when test="class">
                     <xsl:text>**Extends:** </xsl:text>
                     <xsl:if test="class/@qualified and string-length(class/@qualified) > 0">
-                        <xsl:value-of select="my:className(class/@qualified)"/>
+                        <xsl:value-of select="my:className(class/@qualified, root())"/>
                     </xsl:if>
                     <xsl:text>&#xa;&#xa;</xsl:text>
                 </xsl:when>
@@ -205,7 +297,7 @@
                     <xsl:for-each select="interface">
                         <xsl:sort select="@name"/>
                         <xsl:if test="@qualified and string-length(@qualified) > 0">
-                            <xsl:value-of select="my:className(@qualified)"/>
+                            <xsl:value-of select="my:className(@qualified, root())"/>
                             <xsl:if test="position() != last()">
                                 <xsl:text>, </xsl:text>
                             </xsl:if>
@@ -221,7 +313,7 @@
                     <xsl:for-each select="//class[class[@qualified=$qualifiedClassName]]">
                         <xsl:sort select="@name"/>
                         <xsl:if test="@qualified and string-length(@qualified) > 0">
-                            <xsl:value-of select="my:className(@qualified)"/>
+                            <xsl:value-of select="my:className(@qualified, root())"/>
                             <xsl:if test="position() != last()">
                                 <xsl:text>, </xsl:text>
                             </xsl:if>
@@ -353,7 +445,7 @@
                 <xsl:when test="./return[@qualified!='void']">
                     <xsl:text> → </xsl:text>
                     <xsl:if test="./return/@qualified and string-length(./return/@qualified) > 0">
-                        <xsl:value-of select="my:className(./return/@qualified)"/>
+                        <xsl:value-of select="my:className(./return/@qualified, root())"/>
                     </xsl:if>
                 </xsl:when>
             </xsl:choose>
@@ -386,7 +478,7 @@
         <xsl:if test="$paramName and string-length($paramName) > 0">
             <xsl:text>- </xsl:text>
             <xsl:if test="type/@qualified and string-length(type/@qualified) > 0">
-                <xsl:value-of select="my:className(type/@qualified)"/>
+                <xsl:value-of select="my:className(type/@qualified, root())"/>
                 <xsl:text> </xsl:text>
             </xsl:if>
             <xsl:text>**</xsl:text><xsl:value-of select="$paramName"/><xsl:text>**</xsl:text>
@@ -394,7 +486,7 @@
                 <xsl:when test="./return">
                     <xsl:text> → </xsl:text>
                     <xsl:if test="./return/@qualified and string-length(./return/@qualified) > 0">
-                        <xsl:value-of select="my:className(./return/@qualified)"/>
+                        <xsl:value-of select="my:className(./return/@qualified, root())"/>
                     </xsl:if>
                 </xsl:when>
             </xsl:choose>
@@ -412,7 +504,7 @@
     <xsl:template match="return">
         <xsl:if test="@qualified and string-length(@qualified) > 0">
             <xsl:text>**Returns:** </xsl:text>
-            <xsl:value-of select="my:className(@qualified)"/>
+            <xsl:value-of select="my:className(@qualified, root())"/>
             <xsl:choose>
                 <xsl:when test="../tag[@name='@return']">
                     <xsl:text> - </xsl:text>
