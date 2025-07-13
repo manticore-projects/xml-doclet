@@ -2,6 +2,13 @@
 
 Changelog of xml-doclet.
 
+## 2.1.2 (2025-07-13)
+
+### Bug Fixes
+
+-  ReStructured Text indentation ([f11d1](https://github.com/manticore-projects/xml-doclet/commit/f11d1942d2ca077) manticore-projects)  
+-  option handling ([22e40](https://github.com/manticore-projects/xml-doclet/commit/22e40a4a462c43a) manticore-projects)  
+
 ## 2.1.1 (2025-07-13)
 
 ### Bug Fixes
