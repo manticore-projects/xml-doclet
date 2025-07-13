@@ -2,6 +2,12 @@
 
 Changelog of xml-doclet.
 
+## 2.1.1 (2025-07-13)
+
+### Bug Fixes
+
+-  option handling ([1e106](https://github.com/manticore-projects/xml-doclet/commit/1e10600d0720193) manticore-projects)  
+
 ## 2.1.0 (2025-07-13)
 
 ### Features
