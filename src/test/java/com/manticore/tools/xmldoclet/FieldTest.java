@@ -7,8 +7,11 @@ import com.manticore.tools.xmldoclet.xjc.Class;
 import com.manticore.tools.xmldoclet.xjc.Field;
 import com.manticore.tools.xmldoclet.xjc.Package;
 import com.manticore.tools.xmldoclet.xjc.Root;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.Marshaller;
 import org.junit.jupiter.api.Test;
 
+import java.io.StringWriter;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -212,6 +215,50 @@ class FieldTest extends AbstractTest {
         // For an array, the dimension is 1. For a 2D matrix, the dimension is 2, and so on.
         // TODO: The dimension attribute type should be changed to int, but that will require changing the javadoc.xsd
         assertEquals("1", field.getType().getDimension());
+    }
+
+    @Test
+    void testField17() {
+        // field17 -- char constant holding U+0001, which is legal Java but illegal in XML 1.0.
+        // It must be written as its Java escape rather than verbatim.
+        // Note: "\\u0001" below is a six character String (backslash, u, 0, 0, 0, 1), not a
+        // Unicode escape, because the \\u is preceded by an odd number of backslashes (JLS 3.3).
+        final var field = findByFieldName("field17", fields);
+        assertEquals("\\u0001", field.getConstant());
+    }
+
+    @Test
+    void testField18() {
+        // field18 -- String constant with an embedded control character: the legal characters
+        // around it must survive untouched
+        final var field = findByFieldName("field18", fields);
+        assertEquals("a\\u0001b", field.getConstant());
+    }
+
+    /**
+     * Regression test for the JAXB marshaller failing with
+     * {@code Invalid XML character (Unicode: 0x1)} on constants such as
+     * {@code static final char HASH_SUBSTITUTION = '\\u0001'}.
+     *
+     * <p>
+     * The parser tests alone would not catch this, since they never serialize the object model.
+     * </p>
+     */
+    @Test
+    void testMarshallingProducesWellFormedXml() throws Exception {
+        final var marshaller = JAXBContext.newInstance(Root.class).createMarshaller();
+        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+
+        final var writer = new StringWriter();
+        marshaller.marshal(rootNode, writer);
+        final String xml = writer.toString();
+
+        assertTrue(xml.contains("\\u0001"), "The escaped constant is missing from the marshalled XML");
+
+        xml.codePoints().forEach(
+                codePoint -> assertTrue(
+                        XmlChars.isLegal(codePoint),
+                        () -> "Illegal XML 1.0 character U+%04X in the marshalled output".formatted(codePoint)));
     }
 
     /**

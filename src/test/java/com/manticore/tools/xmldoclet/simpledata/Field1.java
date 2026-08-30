@@ -62,4 +62,15 @@ public class Field1 {
     /** field */
     public String[] field16;
 
+    /**
+     * Constant holding U+0001, a character that is legal in Java source but not representable
+     * in XML 1.0. Mirrors the HASH_SUBSTITUTION sentinel in JSqlParser's SimpleCharStream.
+     * The escape is written literally here so that this file itself stays free of control
+     * characters; the compiler translates it into the actual U+0001 before the doclet sees it.
+     */
+    public final char field17 = '\u0001';
+
+    /** Constant with an embedded U+0001, surrounded by legal characters. */
+    public final String field18 = "a\u0001b";
+
 }

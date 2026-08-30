@@ -60,13 +60,13 @@ public class Parser {
 
     /**
      * Gets the JavaDoc comment for an element.
-     * 
+     *
      * This method retrieves the DocCommentTree for an element and returns
      * its full body as a string. It also post-processes the comment to fix
      * an issue where HTML entities and tags get commas added around them.
      * The regex replacements remove these unwanted commas to ensure the
      * HTML content is properly preserved in the generated XML.
-     * 
+     *
      * @param element the element to get its JavaDoc
      * @return the element's JavaDoc comment or empty string if none exists
      */
@@ -85,7 +85,9 @@ public class Parser {
         // Pattern: < or & or > or ; followed by comma
         commentText = commentText.replaceAll("([<&>;]),", "$1");
 
-        return commentText;
+        // A comment may contain characters that are illegal in XML 1.0, for instance when it
+        // documents or embeds a control character.
+        return XmlChars.sanitize(commentText);
     }
 
     /**
@@ -516,7 +518,9 @@ public class Parser {
         fieldNode.setStatic(hasModifier(fieldDoc, Modifier.STATIC));
         fieldNode.setVolatile(hasModifier(fieldDoc, Modifier.VOLATILE));
         fieldNode.setTransient(hasModifier(fieldDoc, Modifier.TRANSIENT));
-        fieldNode.setConstant(requireNonNullElse(fieldDoc.getConstantValue(), "").toString());
+        // Constants such as `static final char HASH_SUBSTITUTION = '\u0001'` are perfectly legal
+        // Java but not representable in XML 1.0, so they must be escaped before marshalling.
+        fieldNode.setConstant(XmlChars.sanitize(requireNonNullElse(fieldDoc.getConstantValue(), "").toString()));
 
         final var annotationParser = new AnnotationParser(this);
         for (final AnnotationMirror annotationDesc : fieldDoc.getAnnotationMirrors()) {
@@ -589,7 +593,7 @@ public class Parser {
     protected TagInfo parseTag(final DocTree tagDoc) {
         final TagInfo tagNode = objectFactory.createTagInfo();
         tagNode.setName(tagDoc.getKind().tagName);
-        tagNode.setText(tagDoc.toString());
+        tagNode.setText(XmlChars.sanitize(tagDoc.toString()));
         return tagNode;
     }
 

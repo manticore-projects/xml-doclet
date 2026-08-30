@@ -47,8 +47,12 @@ class AnnotationParser {
             annotationInstance.setName(annotTypeInfo.asElement().getSimpleName().toString());
             annotationInstance.setQualified(getQualifiedName(annotTypeInfo.asElement()));
         } catch (ClassCastException castException) {
-            LOGGER.severe("Unable to obtain type data about an annotation found on: " + programElement);
-            LOGGER.severe("Add to the classpath the class/jar that defines this annotation.");
+            LOGGER.severe(
+                    "Unable to obtain type data about an annotation found on: "
+                          + programElement
+                          + "\n"
+                          + "Add to the classpath the class/jar that defines this annotation."
+                    );
         }
 
         for (final var elementValuesPair : annotationDesc.getElementValues().entrySet()) {
@@ -85,10 +89,10 @@ class AnnotationParser {
                 List<?> valueList = (List<?>) annotationValue.getValue();
                 parseAnnotationArgListValue(programElement, arg, valueList);
             } else {
-                arg.getValue().add(annotationValue.getValue().toString());
+                arg.getValue().add(XmlChars.sanitize(annotationValue.getValue().toString()));
             }
         } else if (argValue != null) {
-            arg.getValue().add(argValue.toString());
+            arg.getValue().add(XmlChars.sanitize(argValue.toString()));
         }
 
     }
@@ -112,7 +116,7 @@ class AnnotationParser {
                 But each value is not the actual value, but another AnnotationValue object with a value attribute.
                 */
                 AnnotationValue annotationValue = (AnnotationValue) value;
-                arg.getValue().add(annotationValue.getValue().toString());
+                arg.getValue().add(XmlChars.sanitize(annotationValue.getValue().toString()));
             }
         }
 

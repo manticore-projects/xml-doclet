@@ -849,7 +849,11 @@ class ClassTest extends AbstractTest {
 
         assertEquals("char", argument.getType().getQualified());
         assertEquals(1, argument.getValue().size());
-        assertEquals("\u0000", argument.getValue().get(0));
+
+        // U+0000 is not representable in XML 1.0, so it is emitted as its Java escape.
+        // "\\u0000" below is six characters (backslash, u, 0, 0, 0, 0), not a Unicode escape.
+        assertEquals("\\u0000", argument.getValue().get(0));
+
         assertTrue(argument.isPrimitive());
         assertFalse(argument.isArray());
     }
