@@ -7,12 +7,12 @@ XMLDoclet
 ######################################
 
 .. toctree::
-   :maxdepth: 2
-   :hidden:
+    :maxdepth: 1
+    :hidden:
 
-   usage
-   Java API <javadoc.rst>
-   Changelog <changelog.md>
+    usage
+    Java API <javadoc.rst>
+    Changelog <changelog.md>
 
 .. sidebar:: JavaDoc Website
 
@@ -72,7 +72,3 @@ Command Line Options (CLI)
 --basePackage <name>             If set, shorten the Qualified Names by the Base Package name
 
 --withFloatingToc                Integrate the Floating TOC (you need to add the CSS and JS to the CMS) [``false``]
-
-
-
-
