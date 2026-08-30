@@ -2,17 +2,16 @@ import se.bjurr.gitchangelog.plugin.gradle.GitChangelogTask
 
 plugins {
     id "java-library"
-    id "com.vanniktech.maven.publish" version "latest.release"
+    // BASE plugin on purpose: the non-base `com.vanniktech.maven.publish` calls
+    // configureBasedOnAppliedPlugins() for you, which creates a `maven` publication from
+    // components.java. That collides with the `shadow` publication below (same coordinates,
+    // last writer wins). The base plugin configures nothing automatically.
+    id "com.vanniktech.maven.publish.base" version "latest.release"
     id "maven-publish"
     id "signing"
 
-    // https://github.com/GradleUp/shadow
-    // Pinned deliberately: "latest.release" silently jumps across the plugin's minimum Gradle
-    // requirement and breaks the build without any version having changed in this file.
-    // Shadow -> minimum Gradle: 9.0.0 -> 8.11, 9.3.0 -> 9.0, 9.5.0 -> 9.2, 9.7.0 -> 9.4
-    id "com.gradleup.shadow" version "9.6.1"
+    id "com.gradleup.shadow" version "latest.release"
 
-    // https://github.com/qaware/xsd2java-gradle-plugin
     id "de.qaware.gradle.plugin.xsd2java" version "latest.release"
 
     id "com.github.spotbugs" version "latest.release"
@@ -131,29 +130,11 @@ group = 'com.manticore-projects.tools'
 description = 'XML Doclet'
 
 mavenPublishing {
+    publishToMavenCentral(true)
+    signAllPublications()
+
+    // NOT calling configureBasedOnAppliedPlugins() - see the plugins block above.
     coordinates(group, "xml-doclet", version)
-
-    publishing {
-        publications {
-            shadow(MavenPublication) { publication ->
-                // `project.shadow.component(publication)` is the legacy 8.x API.
-                // Shadow 9.x exposes the component directly.
-                from components.shadow
-
-                versionMapping {
-                    usage('java-api') {
-                        fromResolutionOf('runtimeClasspath')
-                    }
-                    usage('java-runtime') {
-                        fromResolutionResult()
-                    }
-                    allVariants {
-                        fromResolutionResult()
-                    }
-                }
-            }
-        }
-    }
 
     pom {
         name = 'XML Doclet'
@@ -194,23 +175,45 @@ mavenPublishing {
     }
 }
 
-// Fix signing task dependencies
-tasks.withType(AbstractPublishToMaven).configureEach {
-    dependsOn(tasks.withType(Sign))
-}
-
-signing {
-    required { !version.endsWith("SNAPSHOT") && gradle.taskGraph.hasTask("publish") }
-}
+// Signing and its task wiring are handled by mavenPublishing.signAllPublications() above.
+// The manual `signing { required { ... hasTask("publish") } }` block that used to live here
+// never matched the `publishToMavenCentral` task and left artifacts unsigned.
 
 java {
+    // Maven Central rejects a release without both of these, and neither is attached to
+    // components.shadow automatically - they are wired into the publication below.
     withSourcesJar()
-    //withJavadocJar()
+    withJavadocJar()
 
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(17))
+    }
+}
+
+// The one and only publication. Declared after the `java` block so that the sourcesJar and
+// javadocJar tasks already exist.
+publishing {
+    publications {
+        shadow(MavenPublication) {
+            // `project.shadow.component(publication)` is the legacy Shadow 8.x API.
+            // Shadow 9.x exposes the component directly.
+            from components.shadow
+
+            // components.shadow carries the fat JAR only; these hang off components.java
+            artifact tasks.named("sourcesJar")
+            artifact tasks.named("javadocJar")
+
+            versionMapping {
+                usage('java-api') {
+                    fromResolutionOf('runtimeClasspath')
+                }
+                usage('java-runtime') {
+                    fromResolutionResult()
+                }
+            }
+        }
     }
 }
 
@@ -238,7 +241,10 @@ xsd2java {
 
 }
 tasks.named("sourcesJar") {
-    dependsOn(xsd2javaJavadoc)
+    // String form on purpose: the xsd2javaJavadoc task is created later by the xsd2java plugin,
+    // so referencing it as a property here only works if sourcesJar happens to still be
+    // unrealized at this point in the script. Task-name dependencies are resolved at execution.
+    dependsOn("xsd2javaJavadoc")
 }
 
 task createEmptyZip(type: Zip) {
@@ -288,6 +294,9 @@ sourceSets {
 
 javadoc {
     dependsOn(createEmptyZip)
+    // The generated xjc sources are on the main source set, so they must exist before javadoc
+    // (and therefore javadocJar, which Maven Central requires) runs.
+    dependsOn("xsd2javaJavadoc")
     if(JavaVersion.current().isJava9Compatible()) {
         options.addBooleanOption('html5', true)
     }
